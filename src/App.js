@@ -78,8 +78,6 @@ class App extends Component {
      setUnit = "C"
    }
 
-  
-  //  let apiKey = '0777bd957ba30103a368d830dd41d177'
    let apiKey = process.env.REACT_APP_API_KEY
 
    fetch(`http://api.openweathermap.org/data/2.5/weather?${typeOfQuery}=${cityOrZipValue},${country}&APPID=${apiKey}&units=${unit}`)
