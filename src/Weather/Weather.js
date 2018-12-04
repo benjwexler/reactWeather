@@ -15,6 +15,7 @@ const weather = (props) => {
           <p> Sunrise: {props.sunset}</p>
           <p>Wind: {props.windDirection} {props.windspeed} mph</p>
           <p> Pressure: {props.pressure} inHg</p>
+          <p>Current Time: {props.time}</p>
         </div>
     )
 };
