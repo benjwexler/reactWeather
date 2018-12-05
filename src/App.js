@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import './App.css';
+import './City/City.css';
 import Form from './Form/Form.js';
 import Weather from './Weather/Weather.js';
 import Unit from './Unit/Unit.js';
-import City from './City/City';
+import City from './City/City.js';
 
 class App extends Component {
 
@@ -205,11 +206,11 @@ class App extends Component {
           humidity = myJson.main.humidity
           pressure = (myJson.main.pressure / 33.863886666667).toFixed(2)
 
-          cityObj = {
-            name: city,
-            temp: currentTemp,
-            cityId: myJson.id
-          }
+          // cityObj = {
+          //   name: city,
+          //   temp: currentTemp,
+          //   cityId: myJson.id
+          // }
 
           fetch(`https://api.timezonedb.com/v2.1/get-time-zone?key=${timeZoneAPIkey}&format=json&by=position&lat=${myJson.coord.lat}&lng=${myJson.coord.lon}`)
             .then(function (response) {
@@ -237,6 +238,18 @@ class App extends Component {
             })
 
           let cityAlreadyListed = false
+
+          cityObj = {
+            name: city,
+            temp: currentTemp,
+            cityId: myJson.id,
+            sunrise: myJson.sys.sunrise,
+            sunset: myJson.sys.sunset,
+            windspeed: myJson.wind.speed,
+            windDirection: myJson.wind.deg,
+            pressure: pressure,
+            gmtOffset: gmtOffset
+          }
 
           for (let i = 0; i < listOfCities.length; i++) {
             console.log(`cityId just search is ${myJson.id}`)
@@ -392,6 +405,10 @@ class App extends Component {
 
     return (
       <div className="App">
+      <div class="cityListContainer">
+        {cities}
+        </div>
+      
 
         <Unit
           click={this.setUnit}
@@ -400,7 +417,7 @@ class App extends Component {
           click={this.fetchWeather}
         />
         {temp}
-        {cities}
+        
       </div>
     );
   }

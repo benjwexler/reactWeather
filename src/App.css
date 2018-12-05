@@ -1,0 +1,8 @@
+* { margin:0; padding:0; box-sizing:border-box; }
+
+.cityListContainer{
+    background: yellow;
+    /* height: auto; */
+    height: auto;
+    width: 100%;
+}
