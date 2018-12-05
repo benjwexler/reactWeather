@@ -23,6 +23,7 @@ class App extends Component {
 
   currentTemp = (lat, lon) => {
     let apiKey = process.env.REACT_APP_API_KEY
+    let timeZoneAPIkey = process.env.REACT_APP_TIMEZONE_API_KEY
     let that = this
 
     fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&APPID=${apiKey}&units=imperial`)
@@ -32,6 +33,7 @@ class App extends Component {
       .then(function (myJson) {
         console.log(myJson)
         console.log(myJson.name)
+        console.log(myJson.coord.lat)
         let listOfCities = [...that.state.listOfCities]
         let city = {
           name: myJson.name,
@@ -43,7 +45,23 @@ class App extends Component {
         that.setState({
           listOfCities: listOfCities
         });
+
+        fetch(`https://api.timezonedb.com/v2.1/get-time-zone?key=${timeZoneAPIkey}&format=json&by=position&lat=${myJson.coord.lat}&lng=${myJson.coord.lon}`)
+        .then(function (response) {
+          console.log(response)
+          console.log("timezone")
+          return response.json();
+        })
+        .then(function (myJson) {
+          console.log(myJson)
+        })
       })
+   
+        
+
+      
+
+      
   }
 
   secondsInterval = setInterval(
