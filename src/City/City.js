@@ -4,7 +4,7 @@ const city = (props) => {
 
     return (
 
-        <div className="City">
+        <div onClick={props.click} className="City">
           <p>Name: {props.city} | {props.temp}°{props.unit}</p>
         </div>
     )

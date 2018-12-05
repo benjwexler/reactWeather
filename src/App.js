@@ -7,7 +7,6 @@ import City from './City/City';
 
 class App extends Component {
 
-
   state = {
     temp: undefined,
     unit: "F",
@@ -18,8 +17,8 @@ class App extends Component {
     windspeed: undefined,
     windDirection: undefined,
     precipitation: undefined,
-    currentTime: new Date(),
-    listOfCities: [{ name: "Dallas", temp: 60 }]
+    currentTime: undefined,
+    listOfCities: []
   }
 
   currentTemp = (lat, lon) => {
@@ -36,7 +35,8 @@ class App extends Component {
         let listOfCities = [...that.state.listOfCities]
         let city = {
           name: myJson.name,
-          temp: myJson.main.temp
+          temp: myJson.main.temp,
+          cityId: myJson.id
         }
         // city.name = myJson.name
         listOfCities.push(city)
@@ -58,10 +58,6 @@ class App extends Component {
         this.currentTemp(position.coords.latitude, position.coords.longitude)
       })
 
-      
-
-      
-
     setTimeout(
       () => 
       setInterval(
@@ -70,11 +66,6 @@ class App extends Component {
 
       , (60000 - ((new Date().getSeconds()) * 1000))
     )
-
-
-
-
-
   }
 
   updateTime() {
@@ -84,7 +75,6 @@ class App extends Component {
   }
 
   updateTime2() {
-    // console.log("ddd")
 
     if(new Date().getSeconds() === 0) {
       clearInterval(this.secondsInterval)
@@ -94,15 +84,12 @@ class App extends Component {
     });
   }
 
-
   setUnit = (event) => {
 
     let currentUnit
     let setTemp
 
     let listOfCities = [...this.state.listOfCities]
-
-
 
     if (event.target.innerText === "Farenheit") {
       currentUnit = "F"
@@ -115,7 +102,6 @@ class App extends Component {
           return city
 
         })
-
 
       } else {
         setTemp = this.state.temp
@@ -144,10 +130,13 @@ class App extends Component {
     });
   }
 
-
-
-
-
+  deleteCity = (cityIndex) => {
+    if(cityIndex !== 0) {
+    const cities = [...this.state.listOfCities];
+    cities.splice(cityIndex, 1);
+    this.setState({listOfCities: cities});
+    }
+  }
 
   fetchWeather = () => {
 
@@ -159,6 +148,8 @@ class App extends Component {
     let city
     let humidity
     let pressure
+    let listOfCities = [...this.state.listOfCities]
+    let cityObj = {}
 
     if (/\d/.test(cityOrZipValue)) {
       typeOfQuery = 'zip'
@@ -188,11 +179,41 @@ class App extends Component {
 
         if (myJson.main !== undefined) {
           console.log(myJson)
+          console.log(myJson.id)
           console.log(myJson.wind)
           const currentTemp = myJson.main.temp
           city = myJson.name
           humidity = myJson.main.humidity
           pressure = (myJson.main.pressure / 33.863886666667).toFixed(2)
+
+          cityObj = {
+            name: city,
+            temp: currentTemp, 
+            cityId: myJson.id
+          }
+
+          
+
+          let cityAlreadyListed = false
+          
+          
+          for(let i=0; i<listOfCities.length; i++) {
+            console.log(`cityId just search is ${myJson.id}`)
+            console.log("blahBlah")
+            console.log(listOfCities[i].cityId) 
+            if(listOfCities[i].cityId === myJson.id) {
+              
+              cityAlreadyListed = true
+              break 
+            }
+          }
+
+          if(cityAlreadyListed === false) {
+            listOfCities.push(cityObj)
+          }
+          
+         
+          
 
           that.setState({
             temp: currentTemp,
@@ -203,7 +224,8 @@ class App extends Component {
             sunset: myJson.sys.sunset,
             windspeed: myJson.wind.speed,
             windDirection: myJson.wind.deg,
-            pressure: pressure
+            pressure: pressure,
+            listOfCities: listOfCities
 
 
           });
@@ -280,8 +302,6 @@ class App extends Component {
       windDirection = "NNW"
     }
 
-
-
     if (sunsetHour < 12) {
       sunsetAMorPM = "PM"
     } else {
@@ -312,6 +332,8 @@ class App extends Component {
             city={city.name}
             temp={Math.round(city.temp)}
             unit={this.state.unit}
+            key={index}
+            click={() => this.deleteCity(index)}
           />
         })}
       </div>
