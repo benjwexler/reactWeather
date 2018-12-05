@@ -18,6 +18,7 @@ class App extends Component {
     windDirection: undefined,
     precipitation: undefined,
     currentTime: undefined,
+    gmtOffset: undefined,
     listOfCities: []
   }
 
@@ -47,21 +48,21 @@ class App extends Component {
         });
 
         fetch(`https://api.timezonedb.com/v2.1/get-time-zone?key=${timeZoneAPIkey}&format=json&by=position&lat=${myJson.coord.lat}&lng=${myJson.coord.lon}`)
-        .then(function (response) {
-          console.log(response)
-          console.log("timezone")
-          return response.json();
-        })
-        .then(function (myJson) {
-          console.log(myJson)
-        })
+          .then(function (response) {
+            console.log(response)
+            console.log("timezone")
+            return response.json();
+          })
+          .then(function (myJson) {
+            console.log(myJson)
+          })
       })
-   
-        
 
-      
 
-      
+
+
+
+
   }
 
   secondsInterval = setInterval(
@@ -77,10 +78,10 @@ class App extends Component {
       })
 
     setTimeout(
-      () => 
-      setInterval(
-        () => this.updateTime(),
-        60000)
+      () =>
+        setInterval(
+          () => this.updateTime(),
+          60000)
 
       , (60000 - ((new Date().getSeconds()) * 1000))
     )
@@ -94,7 +95,7 @@ class App extends Component {
 
   updateTime2() {
 
-    if(new Date().getSeconds() === 0) {
+    if (new Date().getSeconds() === 0) {
       clearInterval(this.secondsInterval)
     }
     this.setState({
@@ -149,10 +150,10 @@ class App extends Component {
   }
 
   deleteCity = (cityIndex) => {
-    if(cityIndex !== 0) {
-    const cities = [...this.state.listOfCities];
-    cities.splice(cityIndex, 1);
-    this.setState({listOfCities: cities});
+    if (cityIndex !== 0) {
+      const cities = [...this.state.listOfCities];
+      cities.splice(cityIndex, 1);
+      this.setState({ listOfCities: cities });
     }
   }
 
@@ -168,6 +169,8 @@ class App extends Component {
     let pressure
     let listOfCities = [...this.state.listOfCities]
     let cityObj = {}
+    let sun
+    let gmtOffset
 
     if (/\d/.test(cityOrZipValue)) {
       typeOfQuery = 'zip'
@@ -187,6 +190,7 @@ class App extends Component {
     }
 
     let apiKey = process.env.REACT_APP_API_KEY
+    let timeZoneAPIkey = process.env.REACT_APP_TIMEZONE_API_KEY
 
     fetch(`http://api.openweathermap.org/data/2.5/weather?${typeOfQuery}=${cityOrZipValue},${country}&APPID=${apiKey}&units=${unit}`)
       .then(function (response) {
@@ -196,9 +200,6 @@ class App extends Component {
 
 
         if (myJson.main !== undefined) {
-          console.log(myJson)
-          console.log(myJson.id)
-          console.log(myJson.wind)
           const currentTemp = myJson.main.temp
           city = myJson.name
           humidity = myJson.main.humidity
@@ -206,32 +207,50 @@ class App extends Component {
 
           cityObj = {
             name: city,
-            temp: currentTemp, 
+            temp: currentTemp,
             cityId: myJson.id
           }
 
-          
+          fetch(`https://api.timezonedb.com/v2.1/get-time-zone?key=${timeZoneAPIkey}&format=json&by=position&lat=${myJson.coord.lat}&lng=${myJson.coord.lon}`)
+            .then(function (response) {
+              sun = myJson.sys.sunrise
+
+              console.log(response)
+              console.log("timezone")
+              return response.json();
+            })
+            .then(function (myJson) {
+              var t = new Date(sun * 1000);
+              gmtOffset = myJson.gmtOffset
+              gmtOffset /= 3600
+              console.log(t)
+              let hour = ('0' + t.getUTCHours()).slice(-2)
+              hour = parseInt(hour)
+              hour += gmtOffset
+              console.log(`The GMTOFFSET is ${gmtOffset}`)
+              that.setState({
+                gmtOffset: gmtOffset
+              });
+
+              var formatted = hour + ':' + ('0' + t.getUTCMinutes()).slice(-2);
+              console.log(formatted)
+            })
 
           let cityAlreadyListed = false
-          
-          
-          for(let i=0; i<listOfCities.length; i++) {
+
+          for (let i = 0; i < listOfCities.length; i++) {
             console.log(`cityId just search is ${myJson.id}`)
             console.log("blahBlah")
-            console.log(listOfCities[i].cityId) 
-            if(listOfCities[i].cityId === myJson.id) {
-              
+            console.log(listOfCities[i].cityId)
+            if (listOfCities[i].cityId === myJson.id) {
               cityAlreadyListed = true
-              break 
+              break
             }
           }
 
-          if(cityAlreadyListed === false) {
+          if (cityAlreadyListed === false) {
             listOfCities.push(cityObj)
           }
-          
-         
-          
 
           that.setState({
             temp: currentTemp,
@@ -244,16 +263,11 @@ class App extends Component {
             windDirection: myJson.wind.deg,
             pressure: pressure,
             listOfCities: listOfCities
-
-
           });
         }
-      });
-
-    fetch(`http://api.openweathermap.org/data/2.5/forecast?${typeOfQuery}=${cityOrZipValue},${country}&APPID=${apiKey}&units=${unit}`)
-      .then(function (response) {
-        console.log(response.json());
       })
+
+
 
 
 
@@ -261,26 +275,45 @@ class App extends Component {
 
   render() {
 
-    let temp = null
-    let sunriseUnix = new Date(this.state.sunrise * 1000)
-    let sunriseHour = sunriseUnix.getHours()
-    let sunriseMinutes = sunriseUnix.getMinutes()
+    var sunriseUTC = new Date(this.state.sunrise * 1000);
+    let sunriseHour = ('0' + sunriseUTC.getUTCHours()).slice(-2)
+    sunriseHour = parseInt(sunriseHour)
+    sunriseHour += this.state.gmtOffset
 
-    sunriseMinutes = ("0" + sunriseMinutes).slice(-2);
-
-    let sunriseAMorPM = "AM"
-
+    let newSunriseAMorPM = "AM"
     if (sunriseHour > 11) {
-      sunriseAMorPM = "PM"
+      newSunriseAMorPM = "PM"
       sunriseHour -= 12
     }
+    var formattedSunrise = sunriseHour + ':' + ('0' + sunriseUTC.getUTCMinutes()).slice(-2);
+
+    
+
+    var sunsetUTC = new Date(this.state.sunset * 1000);
+    let sunsetHour = ('0' + sunsetUTC.getUTCHours()).slice(-2)
+    sunsetHour = parseInt(sunsetHour)
+    sunsetHour += this.state.gmtOffset
+    let newSunsetAMorPM = "PM"
+    if (sunsetHour < 12) {
+      newSunsetAMorPM = "AM"
+    } else {
+      sunsetHour -= 12
+    }
+      
+    var formattedSunset = sunsetHour + ':' + ('0' + sunsetUTC.getUTCMinutes()).slice(-2);
+
+    
+   
+
+    let temp = null
 
 
-    let sunsetUnix = new Date(this.state.sunset * 1000)
-    let sunsetHour = sunsetUnix.getHours()
-    let sunsetMinutes = sunsetUnix.getMinutes()
-    sunsetMinutes = ("0" + sunsetMinutes).slice(-2);
-    let sunsetAMorPM = "PM"
+
+    // let sunsetUnix = new Date(this.state.sunset * 1000)
+    // let sunsetHour = sunsetUnix.getHours()
+    // let sunsetMinutes = sunsetUnix.getMinutes()
+    // sunsetMinutes = ("0" + sunsetMinutes).slice(-2);
+    // let sunsetAMorPM = "PM"
 
     let windDirection
 
@@ -320,19 +353,19 @@ class App extends Component {
       windDirection = "NNW"
     }
 
-    if (sunsetHour < 12) {
-      sunsetAMorPM = "PM"
-    } else {
-      sunsetHour -= 12
-    }
+    // if (sunsetHour < 12) {
+    //   sunsetAMorPM = "PM"
+    // } else {
+    //   sunsetHour -= 12
+    // }
 
     if (this.state.temp) {
 
       temp = (
         <div>
           <Weather temp={Math.round(this.state.temp)} unit={this.state.unit} city={this.state.city} humidity={this.state.humidity}
-            sunrise={`${sunriseHour}:${sunriseMinutes} ${sunriseAMorPM}`}
-            sunset={`${sunsetHour}:${sunsetMinutes} ${sunsetAMorPM}`}
+            sunrise={`${formattedSunrise} ${newSunriseAMorPM}`}
+            sunset={`${formattedSunset} ${newSunsetAMorPM}`}
             windspeed={Math.round(this.state.windspeed)}
             windDirection={windDirection}
             pressure={this.state.pressure}
