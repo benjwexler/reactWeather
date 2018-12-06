@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import './City/City.css';
+import './Unit/Unit.css';
 import Form from './Form/Form.js';
 import Weather from './Weather/Weather.js';
 import Unit from './Unit/Unit.js';
@@ -27,6 +28,9 @@ class App extends Component {
     let apiKey = process.env.REACT_APP_API_KEY
     let timeZoneAPIkey = process.env.REACT_APP_TIMEZONE_API_KEY
     let that = this
+    let gmtOffset
+    let listOfCities
+    let city
 
     fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&APPID=${apiKey}&units=imperial`)
       .then(function (response) {
@@ -36,8 +40,8 @@ class App extends Component {
         console.log(myJson)
         console.log(myJson.name)
         console.log(myJson.coord.lat)
-        let listOfCities = [...that.state.listOfCities]
-        let city = {
+        listOfCities = [...that.state.listOfCities]
+        city = {
           name: myJson.name,
           temp: myJson.main.temp,
           cityId: myJson.id
@@ -55,7 +59,10 @@ class App extends Component {
             return response.json();
           })
           .then(function (myJson) {
+            gmtOffset = myJson.gmtOffset
+              gmtOffset /= 3600
             console.log(myJson)
+            city.gmtOffset = gmtOffset
           })
       })
 
@@ -111,7 +118,7 @@ class App extends Component {
 
     let listOfCities = [...this.state.listOfCities]
 
-    if (event.target.innerText === "Farenheit") {
+    if (event.target.innerText === "°F") {
       currentUnit = "F"
 
       if (this.state.unit === "C") {
@@ -229,6 +236,7 @@ class App extends Component {
               hour = parseInt(hour)
               hour += gmtOffset
               console.log(`The GMTOFFSET is ${gmtOffset}`)
+              cityObj.gmtOffset= gmtOffset
               that.setState({
                 gmtOffset: gmtOffset
               });
@@ -239,17 +247,20 @@ class App extends Component {
 
           let cityAlreadyListed = false
 
-          cityObj = {
-            name: city,
-            temp: currentTemp,
-            cityId: myJson.id,
-            sunrise: myJson.sys.sunrise,
-            sunset: myJson.sys.sunset,
-            windspeed: myJson.wind.speed,
-            windDirection: myJson.wind.deg,
-            pressure: pressure,
-            gmtOffset: gmtOffset
-          }
+      
+          cityObj.name = city
+          cityObj.temp= currentTemp
+          cityObj.cityId= myJson.id
+          cityObj.sunrise= myJson.sys.sunrise
+          cityObj.sunset= myJson.sys.sunset
+          cityObj.windspeed= myJson.wind.speed
+          cityObj.windDirection= myJson.wind.deg
+          cityObj.pressure= pressure
+          
+          
+
+          console.log(`Motha Fucka ${cityObj}`)
+          console.log(cityObj)
 
           for (let i = 0; i < listOfCities.length; i++) {
             console.log(`cityId just search is ${myJson.id}`)
@@ -286,6 +297,28 @@ class App extends Component {
 
   }
 
+  showLocalTime = (time) => {
+    var localUTC = new Date(this.state.currentTime);
+    let localHour = ('0' + localUTC.getUTCHours()).slice(-2)
+    localHour = parseInt(localHour)
+    localHour += time
+    let localAMorPM = "AM"
+    if(localHour < 0) {
+      localHour = 12 + localHour
+      localAMorPM = "PM"
+    }
+    else if (localHour > 11) {
+      localAMorPM = "PM"
+       localHour -= 12
+    } 
+      
+    
+    var formattedlocalTime = localHour + ':' + ('0' + localUTC.getUTCMinutes()).slice(-2) + localAMorPM;
+
+    return formattedlocalTime
+
+  }
+
   render() {
 
     var sunriseUTC = new Date(this.state.sunrise * 1000);
@@ -299,9 +332,6 @@ class App extends Component {
       sunriseHour -= 12
     }
     var formattedSunrise = sunriseHour + ':' + ('0' + sunriseUTC.getUTCMinutes()).slice(-2);
-
-    
-
     var sunsetUTC = new Date(this.state.sunset * 1000);
     let sunsetHour = ('0' + sunsetUTC.getUTCHours()).slice(-2)
     sunsetHour = parseInt(sunsetHour)
@@ -314,22 +344,8 @@ class App extends Component {
     }
       
     var formattedSunset = sunsetHour + ':' + ('0' + sunsetUTC.getUTCMinutes()).slice(-2);
-
-    
-   
-
     let temp = null
-
-
-
-    // let sunsetUnix = new Date(this.state.sunset * 1000)
-    // let sunsetHour = sunsetUnix.getHours()
-    // let sunsetMinutes = sunsetUnix.getMinutes()
-    // sunsetMinutes = ("0" + sunsetMinutes).slice(-2);
-    // let sunsetAMorPM = "PM"
-
     let windDirection
-
     let windDegrees = this.state.windDirection
 
     if (windDegrees > 348.75 || windDegrees <= 11.25) {
@@ -366,12 +382,6 @@ class App extends Component {
       windDirection = "NNW"
     }
 
-    // if (sunsetHour < 12) {
-    //   sunsetAMorPM = "PM"
-    // } else {
-    //   sunsetHour -= 12
-    // }
-
     if (this.state.temp) {
 
       temp = (
@@ -383,6 +393,7 @@ class App extends Component {
             windDirection={windDirection}
             pressure={this.state.pressure}
             time={this.state.currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            
           />
         </div>
       )
@@ -397,7 +408,9 @@ class App extends Component {
             temp={Math.round(city.temp)}
             unit={this.state.unit}
             key={index}
+            id = {index}
             click={() => this.deleteCity(index)}
+            time={this.showLocalTime(city.gmtOffset)}
           />
         })}
       </div>

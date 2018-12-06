@@ -4,14 +4,24 @@ const city = (props) => {
 
     return (
 
-        <div onClick={props.click} className="City">
+        <div className="CityParentContainer"> 
+
+        <div id={`city${props.id}`} className="City">
             <div className="cityContainerLeft">
-                <div className="cityTime"> 12:00 PM</div>
+                <div className="cityTime"> {props.time}</div>
                 <div className="cityName">{props.city}</div>
              </div>
              <div className="cityContainerRight">
                 <p>{props.temp}°</p>
              </div>
+
+        </div>
+
+        <div onClick={props.click} className="deleteBtn">
+            Delete
+        </div>
+
+        
 
         </div>
     )
