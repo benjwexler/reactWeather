@@ -1,11 +1,38 @@
+:root {
+    --width: 80px;
+    --background: blue
+  }
+
+
+  
+
 .City {
     height: 60px;
     background: green;
     width: 100%;
+    /* min-width: 100vw !important; */
     padding: 0px;
     border-bottom: .5px solid black;
     display: flex;
     padding-left: 10px
+}
+
+.CityParentContainer {
+display: flex;
+/* width: calc(100%+150px); */
+width: calc(100% + var(--width));
+
+/* transform: translate(0)  */
+
+}
+
+.deleteBtn {
+
+    width: var(--width);
+    background: red;
+    color: white;
+    text-align: center;
+    padding-top: 20px;
 }
 
 .cityContainerLeft {
@@ -35,5 +62,5 @@
     font-size: 38px;
     padding-top: 10px;
     text-align: end;
-    padding-right: 10px;
+    padding-right: 20px;
 }

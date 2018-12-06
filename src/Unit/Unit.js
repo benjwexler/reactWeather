@@ -7,8 +7,8 @@ const unit = (props) => {
     return (
 
         <div className="Unit">
-          <button onClick={props.click}> Farenheit</button>
-          <button onClick={props.click}> Celsius</button>
+          <div onClick={props.click}> °C</div>&nbsp;/&nbsp;
+          <div onClick={props.click}> °F</div>
         </div>
     )
 };
