@@ -14,13 +14,16 @@
     padding: 0px;
     border-bottom: .5px solid black;
     display: flex;
-    padding-left: 10px
+    padding-left: 10px;
+    overflow-x: hidden;
 }
 
 .CityParentContainer {
 display: flex;
 /* width: calc(100%+150px); */
 width: calc(100% + var(--width));
+/* pointer-events: none; */
+
 
 /* transform: translate(0)  */
 
@@ -64,3 +67,7 @@ width: calc(100% + var(--width));
     text-align: end;
     padding-right: 20px;
 }
+
+/* #city1 {
+    transform: translate(-180px)
+} */

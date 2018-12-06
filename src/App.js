@@ -165,6 +165,27 @@ class App extends Component {
     }
   }
 
+  unify(e) { return e.changedTouches ? e.changedTouches[0] : e };
+
+  drag = (whichCity, e) => {
+    console.log(whichCity)
+    console.log("djdnjdnjd")
+    let unify =  e.changedTouches ? e.changedTouches[0] : e
+    console.log(unify.clientX)
+    
+    document.getElementById(`city${whichCity}`).style.transform = "translate(-50px)";
+    
+  } 
+
+  unDrag = (whichCity) => {
+    console.log(whichCity)
+    document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
+  }
+
+  
+
+
+
   fetchWeather = () => {
 
     let that = this
@@ -411,6 +432,8 @@ class App extends Component {
             id = {index}
             click={() => this.deleteCity(index)}
             time={this.showLocalTime(city.gmtOffset)}
+            drag={(e) => this.drag(index, e)}
+            unDrag={(e) => this.unDrag(index, e)}
           />
         })}
       </div>
