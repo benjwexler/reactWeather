@@ -9,6 +9,11 @@ import City from './City/City.js';
 
 class App extends Component {
 
+  constructor(props) {
+    super(props)
+      this.xAxisLocation = null
+  }
+
   state = {
     temp: undefined,
     unit: "F",
@@ -167,20 +172,77 @@ class App extends Component {
 
   unify(e) { return e.changedTouches ? e.changedTouches[0] : e };
 
-  drag = (whichCity, e) => {
+  lock = (whichCity, e) => {
     console.log(whichCity)
     console.log("djdnjdnjd")
     let unify =  e.changedTouches ? e.changedTouches[0] : e
-    console.log(unify.clientX)
+
+    this.xAxisLocation = unify.clientX
+    console.log(this.xAxisLocation)
     
-    document.getElementById(`city${whichCity}`).style.transform = "translate(-50px)";
+    // document.getElementById(`city${whichCity}`).style.transform = "translate(-50px)";
     
   } 
 
-  unDrag = (whichCity) => {
+  move = (whichCity, e) => {
+
+    if(this.xAxisLocation || this.xAxisLocation === 0) {
+      let unify =  e.changedTouches ? e.changedTouches[0] : e
+      let dx = unify.clientX - this.xAxisLocation, s = Math.sign(dx);
+    
+      // if(s<0)
+
+      // if(document.getElementById(`city${whichCity}`).style.transform <)
+
+      let dragAmount = document.getElementById(`city${whichCity}`).style.transform;
+      dragAmount = dragAmount.match(/\d+/g)[0];
+      if (dragAmount < 80) {
+        document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
+      }
+
+      // console.log(document.getElementById(`city${whichCity}`).style.transform)
+      // document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
+    
+      this.xAxisLocation = null
+    }
+
+  
+
     console.log(whichCity)
-    document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
+    console.log(this.xAxisLocation)
+    // document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
   }
+
+  drag = (whichCity, e) => {
+
+    e.preventDefault();
+
+    console.log("moving")
+    console.log(this.xAxisLocation)
+    
+  
+    if(this.xAxisLocation|| this.xAxisLocation=== 0)  {
+      let unify =  e.changedTouches ? e.changedTouches[0] : e
+
+      console.log(unify.clientX)
+      let amount = Math.round(unify.clientX - this.xAxisLocation)
+      if (amount <= -80) {
+        amount = -80
+      }
+
+      if (amount >= 0) {
+        amount = 0
+      }
+
+     
+      
+      document.getElementById(`city${whichCity}`).style.transform = `translate(${amount}px)`
+      // _C.style.setProperty('--tx', `${Math.round(unify(e).clientX - x0)}px`)
+
+
+      
+    }
+  };
 
   
 
@@ -331,6 +393,11 @@ class App extends Component {
     else if (localHour > 11) {
       localAMorPM = "PM"
        localHour -= 12
+
+       if(localHour === 0) {
+        localHour = 12
+       }
+
     } 
       
     
@@ -432,8 +499,9 @@ class App extends Component {
             id = {index}
             click={() => this.deleteCity(index)}
             time={this.showLocalTime(city.gmtOffset)}
-            drag={(e) => this.drag(index, e)}
-            unDrag={(e) => this.unDrag(index, e)}
+            lock={(e) => this.lock(index, e)}
+            move={(e) => this.move(index, e)}
+            drag = {(e) => this.drag(index, e)}
           />
         })}
       </div>
