@@ -173,6 +173,7 @@ class App extends Component {
   unify(e) { return e.changedTouches ? e.changedTouches[0] : e };
 
   lock = (whichCity, e) => {
+    console.log(document.getElementById(`city${whichCity}`).style.transform)
     console.log(whichCity)
     console.log("djdnjdnjd")
     let unify =  e.changedTouches ? e.changedTouches[0] : e
@@ -180,7 +181,7 @@ class App extends Component {
     this.xAxisLocation = unify.clientX
     console.log(this.xAxisLocation)
     
-    // document.getElementById(`city${whichCity}`).style.transform = "translate(-50px)";
+    document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
     
   } 
 
@@ -195,10 +196,18 @@ class App extends Component {
       // if(document.getElementById(`city${whichCity}`).style.transform <)
 
       let dragAmount = document.getElementById(`city${whichCity}`).style.transform;
-      dragAmount = dragAmount.match(/\d+/g)[0];
+      // dragAmount = dragAmount.match(/\d+/g)
+      dragAmount = dragAmount.match(/\d+/g)[0]
       if (dragAmount < 80) {
-        document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
-      }
+            document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
+          }
+      // if(dragAmount.length>0) {
+      //   dragAmount = dragAmount[0]
+      //   if (dragAmount < 80) {
+      //     document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
+      //   }
+      // }
+      
 
       // console.log(document.getElementById(`city${whichCity}`).style.transform)
       // document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
@@ -211,6 +220,13 @@ class App extends Component {
     console.log(whichCity)
     console.log(this.xAxisLocation)
     // document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
+  }
+
+  preventScroll = (whichCity, e) => { 
+
+    e.preventDefault();
+
+    console.log("Whyis it scrolling?")
   }
 
   drag = (whichCity, e) => {
@@ -502,6 +518,7 @@ class App extends Component {
             lock={(e) => this.lock(index, e)}
             move={(e) => this.move(index, e)}
             drag = {(e) => this.drag(index, e)}
+            preventScroll = {(e) => this.preventScroll(index, e)}
           />
         })}
       </div>
