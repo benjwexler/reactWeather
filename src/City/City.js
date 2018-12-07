@@ -10,7 +10,9 @@ const city = (props) => {
         onMouseUp={props.move} 
         onTouchEnd={props.move} 
         onMouseMove={props.drag}
-        onTouchMove={props.drag} >
+        onTouchMove={props.drag} 
+        onWheel={props.preventScroll}
+        >
                 <div  className="City">
                     <div className="cityContainerLeft">
                         <div className="cityTime"> {props.time}</div>
