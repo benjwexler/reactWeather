@@ -37,7 +37,7 @@ class App extends Component {
     let listOfCities
     let city
 
-    fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&APPID=${apiKey}&units=imperial`)
+    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&APPID=${apiKey}&units=imperial`)
       .then(function (response) {
         return response.json();
       })
@@ -299,7 +299,7 @@ class App extends Component {
     let apiKey = process.env.REACT_APP_API_KEY
     let timeZoneAPIkey = process.env.REACT_APP_TIMEZONE_API_KEY
 
-    fetch(`http://api.openweathermap.org/data/2.5/weather?${typeOfQuery}=${cityOrZipValue},${country}&APPID=${apiKey}&units=${unit}`)
+    fetch(`https://api.openweathermap.org/data/2.5/weather?${typeOfQuery}=${cityOrZipValue},${country}&APPID=${apiKey}&units=${unit}`)
       .then(function (response) {
         return response.json();
       })
