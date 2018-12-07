@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/benjwexler/reactWeather/precache-manifest.84302cb433f1f046f3dd149876fc8ea4.js"
+  "/reactWeather/precache-manifest.d3f71ea833a96763ef5484fd0ac41d72.js"
 );
 
 workbox.clientsClaim();
@@ -28,7 +28,7 @@ self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerNavigationRoute("/benjwexler/reactWeather/index.html", {
+workbox.routing.registerNavigationRoute("/reactWeather/index.html", {
   
   blacklist: [/^\/_/,/\/[^\/]+\.[^\/]+$/],
 });
