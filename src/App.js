@@ -187,6 +187,8 @@ class App extends Component {
 
   move = (whichCity, e) => {
 
+    document.body.style.overflow ="visible"
+
     if(this.xAxisLocation || this.xAxisLocation === 0) {
       let unify =  e.changedTouches ? e.changedTouches[0] : e
       let dx = unify.clientX - this.xAxisLocation, s = Math.sign(dx);
@@ -213,6 +215,7 @@ class App extends Component {
       // document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
     
       this.xAxisLocation = null
+      
     }
 
   
@@ -235,6 +238,10 @@ class App extends Component {
 
     console.log("moving")
     console.log(this.xAxisLocation)
+
+    if(this.xAxisLocation!== 0) {
+      document.body.style.overflow ="hidden"
+    }
     
   
     if(this.xAxisLocation|| this.xAxisLocation=== 0)  {

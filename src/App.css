@@ -1,8 +1,9 @@
 * { margin:0; padding:0; box-sizing:border-box; }
 
-body { 
-
-     }
+body {
+    position:relative;
+    /* overflow:hidden; */
+  }
 
 .cityListContainer{
     background: yellow;
