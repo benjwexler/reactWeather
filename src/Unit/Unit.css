@@ -7,3 +7,7 @@
     padding-left: 10px;
     font-size: 14px;
 }
+
+.currentUnit {
+    color: purple;
+}

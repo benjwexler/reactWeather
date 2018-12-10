@@ -542,6 +542,7 @@ class App extends Component {
 
         <Unit
           click={this.setUnit}
+          currentUnit={this.state.unit}
         />
         <Form
           click={this.fetchWeather}
