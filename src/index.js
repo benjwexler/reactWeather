@@ -10,3 +10,9 @@ ReactDOM.render(<App />, document.getElementById('root'));
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: http://bit.ly/CRA-PWA
 serviceWorker.unregister();
+document.ontouchmove = function (e) {
+    e.preventDefault();
+  }
+//   var vpH = window.innerHeight;
+//   document.documentElement.style.height = vpH.toString() + "px";
+//   document.body.style.height = vpH.toString() + "px";

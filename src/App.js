@@ -173,6 +173,7 @@ class App extends Component {
   unify(e) { return e.changedTouches ? e.changedTouches[0] : e };
 
   lock = (whichCity, e) => {
+    document.body.style.position = "fixed"
     console.log(document.getElementById(`city${whichCity}`).style.transform)
     console.log(whichCity)
     console.log("djdnjdnjd")
@@ -186,6 +187,7 @@ class App extends Component {
   } 
 
   move = (whichCity, e) => {
+    document.body.style.position = "static"
 
     document.body.style.overflow ="visible"
 
