@@ -11,7 +11,7 @@ class App extends Component {
 
   constructor(props) {
     super(props)
-      this.xAxisLocation = null
+    this.xAxisLocation = null
   }
 
   state = {
@@ -26,7 +26,8 @@ class App extends Component {
     precipitation: undefined,
     currentTime: undefined,
     gmtOffset: undefined,
-    listOfCities: []
+    listOfCities: [],
+    nonsense: 0
   }
 
   currentTemp = (lat, lon) => {
@@ -65,16 +66,11 @@ class App extends Component {
           })
           .then(function (myJson) {
             gmtOffset = myJson.gmtOffset
-              gmtOffset /= 3600
+            gmtOffset /= 3600
             console.log(myJson)
             city.gmtOffset = gmtOffset
           })
       })
-
-
-
-
-
 
   }
 
@@ -155,9 +151,8 @@ class App extends Component {
     }
 
     this.setState({
-      temp: setTemp,
+      listOfCities: listOfCities,
       unit: currentUnit,
-      listOfCities: listOfCities
 
     });
   }
@@ -177,57 +172,35 @@ class App extends Component {
     console.log(document.getElementById(`city${whichCity}`).style.transform)
     console.log(whichCity)
     console.log("djdnjdnjd")
-    let unify =  e.changedTouches ? e.changedTouches[0] : e
+    let unify = e.changedTouches ? e.changedTouches[0] : e
 
     this.xAxisLocation = unify.clientX
     console.log(this.xAxisLocation)
-    
+
     document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
-    
-  } 
+
+  }
 
   move = (whichCity, e) => {
     document.body.style.position = "static"
 
-    document.body.style.overflow ="visible"
+    document.body.style.overflow = "visible"
 
-    if(this.xAxisLocation || this.xAxisLocation === 0) {
-      let unify =  e.changedTouches ? e.changedTouches[0] : e
+    if (this.xAxisLocation || this.xAxisLocation === 0) {
+      let unify = e.changedTouches ? e.changedTouches[0] : e
       let dx = unify.clientX - this.xAxisLocation, s = Math.sign(dx);
-    
-      // if(s<0)
-
-      // if(document.getElementById(`city${whichCity}`).style.transform <)
 
       let dragAmount = document.getElementById(`city${whichCity}`).style.transform;
-      // dragAmount = dragAmount.match(/\d+/g)
       dragAmount = dragAmount.match(/\d+/g)[0]
       if (dragAmount < 80) {
-            document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
-          }
-      // if(dragAmount.length>0) {
-      //   dragAmount = dragAmount[0]
-      //   if (dragAmount < 80) {
-      //     document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
-      //   }
-      // }
-      
-
-      // console.log(document.getElementById(`city${whichCity}`).style.transform)
-      // document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
-    
+        document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
+      }
       this.xAxisLocation = null
-      
     }
 
-  
-
-    console.log(whichCity)
-    console.log(this.xAxisLocation)
-    // document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
   }
 
-  preventScroll = (whichCity, e) => { 
+  preventScroll = (whichCity, e) => {
 
     e.preventDefault();
 
@@ -235,42 +208,77 @@ class App extends Component {
   }
 
   drag = (whichCity, e) => {
-
     e.preventDefault();
 
-    console.log("moving")
-    console.log(this.xAxisLocation)
-
-    if(this.xAxisLocation!== 0) {
-      document.body.style.overflow ="hidden"
+    if (this.xAxisLocation !== 0) {
+      document.body.style.overflow = "hidden"
     }
-    
-  
-    if(this.xAxisLocation|| this.xAxisLocation=== 0)  {
-      let unify =  e.changedTouches ? e.changedTouches[0] : e
 
-      console.log(unify.clientX)
+    if (this.xAxisLocation || this.xAxisLocation === 0) {
+      let unify = e.changedTouches ? e.changedTouches[0] : e
       let amount = Math.round(unify.clientX - this.xAxisLocation)
+
       if (amount <= -80) {
         amount = -80
       }
-
       if (amount >= 0) {
         amount = 0
       }
-
-     
-      
       document.getElementById(`city${whichCity}`).style.transform = `translate(${amount}px)`
-      // _C.style.setProperty('--tx', `${Math.round(unify(e).clientX - x0)}px`)
-
-
-      
     }
   };
 
-  
+  updateCity = (cityObj) => {
 
+    let newNonsense = this.state.nonsense
+    newNonsense++
+
+    let that = this 
+
+    let unit
+    let setUnit
+    let listOfCities = [...this.state.listOfCities]
+    let apiKey = process.env.REACT_APP_API_KEY
+    let cityId = cityObj.cityId
+
+    if (this.state.unit === "F") {
+      unit = 'imperial'
+      setUnit = "F"
+    } else {
+      unit = 'metric'
+      setUnit = "C"
+    }
+
+    fetch(`https://api.openweathermap.org/data/2.5/weather?id=${cityId}&APPID=${apiKey}&units=${unit}`)
+      .then(function (response) {
+        return response.json();
+      }).then(function (myJson) {
+
+
+        if (myJson.main !== undefined) {
+          const currentTemp = myJson.main.temp
+          console.log(currentTemp)
+
+          for (let i = 0; i < listOfCities.length; i++) {
+
+            if (listOfCities[i].cityId === cityId) {
+              listOfCities[i].temp = currentTemp
+              break
+            }
+          }
+
+          that.setState({
+            listOfCities: listOfCities,
+            nonsense: newNonsense
+      
+          });
+          
+
+        }
+
+      })
+
+  }
 
 
   fetchWeather = () => {
@@ -344,7 +352,7 @@ class App extends Component {
               hour = parseInt(hour)
               hour += gmtOffset
               console.log(`The GMTOFFSET is ${gmtOffset}`)
-              cityObj.gmtOffset= gmtOffset
+              cityObj.gmtOffset = gmtOffset
               that.setState({
                 gmtOffset: gmtOffset
               });
@@ -355,17 +363,17 @@ class App extends Component {
 
           let cityAlreadyListed = false
 
-      
+
           cityObj.name = city
-          cityObj.temp= currentTemp
-          cityObj.cityId= myJson.id
-          cityObj.sunrise= myJson.sys.sunrise
-          cityObj.sunset= myJson.sys.sunset
-          cityObj.windspeed= myJson.wind.speed
-          cityObj.windDirection= myJson.wind.deg
-          cityObj.pressure= pressure
-          
-          
+          cityObj.temp = currentTemp
+          cityObj.cityId = myJson.id
+          cityObj.sunrise = myJson.sys.sunrise
+          cityObj.sunset = myJson.sys.sunset
+          cityObj.windspeed = myJson.wind.speed
+          cityObj.windDirection = myJson.wind.deg
+          cityObj.pressure = pressure
+
+
 
           console.log(`Motha Fucka ${cityObj}`)
           console.log(cityObj)
@@ -384,8 +392,12 @@ class App extends Component {
             listOfCities.push(cityObj)
           }
 
+          setInterval(
+            () => that.updateCity(cityObj),
+            60000)
+
           that.setState({
-            temp: currentTemp,
+            temp: currentTemp, 
             unit: setUnit,
             city: city,
             humidity: humidity,
@@ -396,6 +408,8 @@ class App extends Component {
             pressure: pressure,
             listOfCities: listOfCities
           });
+
+         
         }
       })
 
@@ -411,21 +425,21 @@ class App extends Component {
     localHour = parseInt(localHour)
     localHour += time
     let localAMorPM = "AM"
-    if(localHour < 0) {
+    if (localHour < 0) {
       localHour = 12 + localHour
       localAMorPM = "PM"
     }
     else if (localHour > 11) {
       localAMorPM = "PM"
-       localHour -= 12
+      localHour -= 12
 
-       if(localHour === 0) {
+      if (localHour === 0) {
         localHour = 12
-       }
+      }
 
-    } 
-      
-    
+    }
+
+
     var formattedlocalTime = localHour + ':' + ('0' + localUTC.getUTCMinutes()).slice(-2) + localAMorPM;
 
     return formattedlocalTime
@@ -455,7 +469,7 @@ class App extends Component {
     } else {
       sunsetHour -= 12
     }
-      
+
     var formattedSunset = sunsetHour + ':' + ('0' + sunsetUTC.getUTCMinutes()).slice(-2);
     let temp = null
     let windDirection
@@ -506,7 +520,7 @@ class App extends Component {
             windDirection={windDirection}
             pressure={this.state.pressure}
             time={this.state.currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-            
+
           />
         </div>
       )
@@ -521,13 +535,14 @@ class App extends Component {
             temp={Math.round(city.temp)}
             unit={this.state.unit}
             key={index}
-            id = {index}
+            id={index}
             click={() => this.deleteCity(index)}
             time={this.showLocalTime(city.gmtOffset)}
             lock={(e) => this.lock(index, e)}
             move={(e) => this.move(index, e)}
-            drag = {(e) => this.drag(index, e)}
-            preventScroll = {(e) => this.preventScroll(index, e)}
+            drag={(e) => this.drag(index, e)}
+            preventScroll={(e) => this.preventScroll(index, e)}
+            
           />
         })}
       </div>
@@ -535,10 +550,10 @@ class App extends Component {
 
     return (
       <div className="App">
-      <div class="cityListContainer">
-        {cities}
+        <div class="cityListContainer">
+          {cities}
         </div>
-      
+
 
         <Unit
           click={this.setUnit}
@@ -546,9 +561,10 @@ class App extends Component {
         />
         <Form
           click={this.fetchWeather}
+          nonsense={this.state.nonsense}
         />
         {temp}
-        
+
       </div>
     );
   }
