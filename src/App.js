@@ -2,10 +2,13 @@ import React, { Component } from 'react';
 import './App.css';
 import './City/City.css';
 import './Unit/Unit.css';
+import './Form/Form.css';
 import Form from './Form/Form.js';
 import Weather from './Weather/Weather.js';
 import Unit from './Unit/Unit.js';
 import City from './City/City.js';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 class App extends Component {
 
@@ -27,7 +30,7 @@ class App extends Component {
     currentTime: undefined,
     gmtOffset: undefined,
     listOfCities: [],
-    nonsense: 0
+    showSearchScreen: false,
   }
 
   currentTemp = (lat, lon) => {
@@ -233,7 +236,7 @@ class App extends Component {
     let newNonsense = this.state.nonsense
     newNonsense++
 
-    let that = this 
+    let that = this
 
     let unit
     let setUnit
@@ -270,9 +273,9 @@ class App extends Component {
           that.setState({
             listOfCities: listOfCities,
             nonsense: newNonsense
-      
+
           });
-          
+
 
         }
 
@@ -397,7 +400,7 @@ class App extends Component {
             60000)
 
           that.setState({
-            temp: currentTemp, 
+            temp: currentTemp,
             unit: setUnit,
             city: city,
             humidity: humidity,
@@ -409,7 +412,7 @@ class App extends Component {
             listOfCities: listOfCities
           });
 
-         
+
         }
       })
 
@@ -444,6 +447,13 @@ class App extends Component {
 
     return formattedlocalTime
 
+  }
+
+  clicker = () => {
+
+    this.setState({
+      showSearchScreen: !this.state.showSearchScreen
+    });
   }
 
   render() {
@@ -542,28 +552,66 @@ class App extends Component {
             move={(e) => this.move(index, e)}
             drag={(e) => this.drag(index, e)}
             preventScroll={(e) => this.preventScroll(index, e)}
-            
+
           />
         })}
       </div>
     );
 
+    let showOrHide
+    if (this.state.showSearchScreen === true) {
+      showOrHide = "showScreen"
+    } else {
+      showOrHide = "hideScreen"
+    }
+
+
+
+
+
+
+    let searchScreen = (
+
+
+      <div className={showOrHide} >
+            <Form
+          click={this.fetchWeather}
+          hideSearchScreen={() => this.clicker()}
+
+        />
+
+
+
+      </div>
+
+
+
+    )
+
     return (
       <div className="App">
-        <div class="cityListContainer">
+        <div className="cityListContainer">
           {cities}
         </div>
-
+        <div onClick={() => this.clicker()} > 
+        <FontAwesomeIcon
+          
+          icon={faPlus} />
+          </div>
 
         <Unit
           click={this.setUnit}
           currentUnit={this.state.unit}
         />
-        <Form
-          click={this.fetchWeather}
-          nonsense={this.state.nonsense}
-        />
+
+        {searchScreen}
+
+
+
         {temp}
+
+
+
 
       </div>
     );
