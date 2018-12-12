@@ -318,6 +318,7 @@ class App extends Component {
 
     let apiKey = process.env.REACT_APP_API_KEY
     let timeZoneAPIkey = process.env.REACT_APP_TIMEZONE_API_KEY
+    let showSearchScreen = this.state.showSearchScreen
 
     fetch(`https://api.openweathermap.org/data/2.5/weather?${typeOfQuery}=${cityOrZipValue},${country}&APPID=${apiKey}&units=${unit}`)
       .then(function (response) {
@@ -327,6 +328,8 @@ class App extends Component {
 
 
         if (myJson.main !== undefined) {
+          showSearchScreen = !showSearchScreen
+          
           const currentTemp = myJson.main.temp
           city = myJson.name
           humidity = myJson.main.humidity
@@ -409,7 +412,8 @@ class App extends Component {
             windspeed: myJson.wind.speed,
             windDirection: myJson.wind.deg,
             pressure: pressure,
-            listOfCities: listOfCities
+            listOfCities: listOfCities,
+            showSearchScreen: showSearchScreen
           });
 
 
@@ -446,6 +450,15 @@ class App extends Component {
     var formattedlocalTime = localHour + ':' + ('0' + localUTC.getUTCMinutes()).slice(-2) + localAMorPM;
 
     return formattedlocalTime
+
+  }
+
+  clearInput = () => {
+
+    if (document.getElementById('city')) {
+      document.getElementById('city').value = ""
+      document.getElementById('country').value = ""
+      }
 
   }
 
@@ -561,7 +574,12 @@ class App extends Component {
     let showOrHide
     if (this.state.showSearchScreen === true) {
       showOrHide = "showScreen"
+
     } else {
+      if (document.getElementById('city')) {
+      document.getElementById('city').value = ""
+      document.getElementById('country').value = ""
+      }
       showOrHide = "hideScreen"
     }
 
@@ -577,7 +595,7 @@ class App extends Component {
             <Form
           click={this.fetchWeather}
           hideSearchScreen={() => this.clicker()}
-
+          clearInput={() => this.clearInput()}
         />
 
 
