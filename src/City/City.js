@@ -17,6 +17,7 @@ const city = (props) => {
                     <div className="cityContainerLeft">
                         <div className="cityTime"> {props.time}</div>
                         <div className="cityName">{props.city}</div>
+                        
                     </div>
                     <div className="cityContainerRight">
                         <p>{props.temp}°</p>
