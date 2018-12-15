@@ -9,6 +9,13 @@ import Unit from './Unit/Unit.js';
 import City from './City/City.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
+
+import { library } from '@fortawesome/fontawesome-svg-core'
+
+import { faIgloo } from '@fortawesome/free-solid-svg-icons'
+
+library.add(faSearch)
 
 class App extends Component {
 
@@ -181,6 +188,7 @@ class App extends Component {
     console.log(this.xAxisLocation)
 
     document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
+    document.body.style.overflow = "hidden"
 
   }
 
@@ -197,6 +205,7 @@ class App extends Component {
       dragAmount = dragAmount.match(/\d+/g)[0]
       if (dragAmount < 80) {
         document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
+        
       }
       this.xAxisLocation = null
     }
@@ -596,6 +605,7 @@ class App extends Component {
           click={this.fetchWeather}
           hideSearchScreen={() => this.clicker()}
           clearInput={() => this.clearInput()}
+          fontAwesome={faPlus}
         />
 
 
@@ -611,7 +621,7 @@ class App extends Component {
         <div className="cityListContainer">
           {cities}
         </div>
-        <div onClick={() => this.clicker()} > 
+        <div className="plusBtn" onClick={() => this.clicker()} > 
         <FontAwesomeIcon
           
           icon={faPlus} />

@@ -7,6 +7,11 @@ body {
   width: 100vw;
   margin:0; padding:0;
   box-sizing:border-box;
+  max-height: 120vh;
+}
+
+.app {
+  overflow: hidden;
 }
 
 .cityListContainer{
@@ -15,6 +20,13 @@ body {
     height: auto;
     width: 100%;
     overflow-x: hidden
+}
+
+.plusBtn {
+  float: right;
+  border: 1px solid black;
+  border-radius: 50%;
+  margin-right: 2%;
 }
 
 
