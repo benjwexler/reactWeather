@@ -13,7 +13,6 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 
-import { faIgloo } from '@fortawesome/free-solid-svg-icons'
 
 library.add(faSearch)
 
@@ -39,6 +38,7 @@ class App extends Component {
     gmtOffset: undefined,
     listOfCities: [],
     showSearchScreen: false,
+    displayCity: undefined 
   }
 
   currentTemp = (lat, lon) => {
@@ -282,6 +282,18 @@ if(!this.xAxisLocation) {
     }
   };
 
+  displayCity = (cityIndex, e) => {
+    console.log(`the city name is: `)
+    console.log(this.state.listOfCities[cityIndex])
+    console.log(document.getElementById(`city${cityIndex}`).style.transform)
+    if(document.getElementById(`city${cityIndex}`).style.transform === 'translate(0px)') {
+      console.log(0)
+    } else {
+      console.log(1)
+    }
+
+  }
+
   updateCity = (cityObj) => {
 
     let newNonsense = this.state.nonsense
@@ -429,6 +441,7 @@ if(!this.xAxisLocation) {
           cityObj.windspeed = myJson.wind.speed
           cityObj.windDirection = myJson.wind.deg
           cityObj.pressure = pressure
+          cityObj.deleteBtnDisplayed = false
 
 
 
@@ -612,12 +625,13 @@ if(!this.xAxisLocation) {
             unit={this.state.unit}
             key={index}
             id={index}
-            click={() => this.deleteCity(index)}
+            deleteCity={() => this.deleteCity(index)}
             time={this.showLocalTime(city.gmtOffset)}
             lock={(e) => this.lock(index, e)}
             move={(e) => this.move(index, e)}
             drag={(e) => this.drag(index, e)}
             preventScroll={(e) => this.preventScroll(index, e)}
+            displayCity={(e ) => this.displayCity(index, e)}
 
           />
         })}
