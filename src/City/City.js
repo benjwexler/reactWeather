@@ -5,14 +5,15 @@ const city = (props) => {
     return (
 
         <div id={`city${props.id}`} className="CityParentContainer"
-            onMouseDown={props.lock}
-            onTouchStart={props.lock}
+            // onMouseDown={props.lock}
+            // onTouchStart={props.lock}
+            onPointerDown={props.lock}
             onMouseUp={props.move}
             onTouchEnd={props.move}
             onMouseMove={props.drag}
             onTouchMove={props.drag}
             onWheel={props.preventScroll}
-            onClick={props.displayCity}
+            
           
         >
             <div className="City">
