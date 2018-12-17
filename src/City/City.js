@@ -12,6 +12,8 @@ const city = (props) => {
             onMouseMove={props.drag}
             onTouchMove={props.drag}
             onWheel={props.preventScroll}
+            onClick={props.displayCity}
+          
         >
             <div className="City">
                 <div className="cityContainerLeft">
@@ -23,7 +25,7 @@ const city = (props) => {
                     <p>{props.temp}°</p>
                 </div>
             </div>
-            <div onClick={props.click} onTouchStart={props.click} className="deleteBtn">
+            <div onClick={props.deleteCity} onTouchStart={props.deleteCity} className="deleteBtn">
                 Delete
                 </div>
         </div>
