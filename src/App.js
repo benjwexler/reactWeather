@@ -9,12 +9,20 @@ import Unit from './Unit/Unit.js';
 import City from './City/City.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
+
+import { library } from '@fortawesome/fontawesome-svg-core'
+
+import { faIgloo } from '@fortawesome/free-solid-svg-icons'
+
+library.add(faSearch)
 
 class App extends Component {
 
   constructor(props) {
     super(props)
     this.xAxisLocation = null
+    this.yAxisLocation = null
   }
 
   state = {
@@ -168,7 +176,16 @@ class App extends Component {
     }
   }
 
+
+
   unify(e) { return e.changedTouches ? e.changedTouches[0] : e };
+
+  lockY = (e) => {
+    document.body.style.transition = "transform 0s";
+    let unify = e.changedTouches ? e.changedTouches[0] : e
+    this.yAxisLocation = unify.clientY
+    console.log(this.yAxisLocation)
+  }
 
   lock = (whichCity, e) => {
     document.body.style.position = "fixed"
@@ -181,13 +198,29 @@ class App extends Component {
     console.log(this.xAxisLocation)
 
     document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
+    document.body.style.overflow = "hidden"
+
+  }
+
+  moveY = (e) => {
+
+    if (this.yAxisLocation || this.yAxisLocation === 0) {
+      let unify = e.changedTouches ? e.changedTouches[0] : e
+      console.log(this.yAxisLocation)
+      let dy = unify.clientY - this.yAxisLocation, s = Math.sign(dy);
+      this.yAxisLocation = null
+    }
+
+
+    document.body.style.transition = "transform .5s";
+    document.body.style.transform = `translateY(0px)`
 
   }
 
   move = (whichCity, e) => {
-    document.body.style.position = "static"
+    // document.querySelector('.App').style.position = "static"
 
-    document.body.style.overflow = "visible"
+    // document.querySelector('.App').style.overflow = "visible"
 
     if (this.xAxisLocation || this.xAxisLocation === 0) {
       let unify = e.changedTouches ? e.changedTouches[0] : e
@@ -197,6 +230,7 @@ class App extends Component {
       dragAmount = dragAmount.match(/\d+/g)[0]
       if (dragAmount < 80) {
         document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
+        
       }
       this.xAxisLocation = null
     }
@@ -210,9 +244,26 @@ class App extends Component {
     console.log("Whyis it scrolling?")
   }
 
-  drag = (whichCity, e) => {
-    e.preventDefault();
+  dragY = (e) => {
 
+    console.log(e.target)
+    console.log(this.xAxisLocation)
+
+if(!this.xAxisLocation) {
+    if (this.yAxisLocation || this.yAxisLocation === 0) {
+      let unify = e.changedTouches ? e.changedTouches[0] : e
+      let amount = Math.round(unify.clientY - this.yAxisLocation)
+
+      document.body.style.transform = `translateY(${amount}px)`
+    }
+  }
+}
+
+  drag = (whichCity, e) => {
+    // e.preventDefault();
+
+
+// This isn't exactly working, but the idea is that user can only scroll if they aren't trying to swipe sideways
     if (this.xAxisLocation !== 0) {
       document.body.style.overflow = "hidden"
     }
@@ -440,10 +491,12 @@ class App extends Component {
       localAMorPM = "PM"
       localHour -= 12
 
-      if (localHour === 0) {
-        localHour = 12
-      }
+     
 
+    }
+
+    if (localHour === 0) {
+      localHour = 12
     }
 
 
@@ -596,6 +649,7 @@ class App extends Component {
           click={this.fetchWeather}
           hideSearchScreen={() => this.clicker()}
           clearInput={() => this.clearInput()}
+          fontAwesome={faPlus}
         />
 
 
@@ -607,11 +661,18 @@ class App extends Component {
     )
 
     return (
-      <div className="App">
+      <div className="App"  
+      onMouseDown={(e) => this.lockY(e)}
+      onTouchStart={(e) => this.lockY(e)}
+      onMouseUp={(e) => this.moveY(e)}
+      onTouchEnd={(e) => this.moveY(e)}
+      onMouseMove={(e) => this.dragY(e)}
+      onTouchMove={(e) => this.dragY(e)}
+      >
         <div className="cityListContainer">
           {cities}
         </div>
-        <div onClick={() => this.clicker()} > 
+        <div className="plusBtn" onClick={() => this.clicker()} > 
         <FontAwesomeIcon
           
           icon={faPlus} />

@@ -5,6 +5,65 @@
     width: 200px;
 }
 
+.fa-search {
+    position: absolute !important;
+    top: 85px !important;
+    color: yellow !important;
+    left: 22px !important;
+}
+
+.fontAwesome {
+    color: yellow;
+}
+
+
+
+#city {
+    font-size: 16px;
+    width: 150px;
+    width: 45%;
+    padding-left: 20px;
+    height: 50px;
+    overflow: hidden;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    caret-color: white;
+    background: rgba(31, 31, 31, 0.884);
+    color: white;
+    /* padding-top: 5%; */
+
+    margin-left: 5%;
+}
+
+#city::placeholder {
+    color: yellow;
+}
+
+#country::placeholder {
+    color: yellow;
+}
+
+#country {
+    font-size: 16px;
+    width: 150px;
+    width: 35%;
+    margin-bottom: 5%;
+    /* margin-left: 5%; */
+    height: 50px;
+    caret-color: white;
+    background: rgba(31, 31, 31, 0.884);
+    color: white;
+     padding-left: 20px;
+     /* padding-top: 5%; */
+    /* background: rgba(199, 70, 115, 0.384); */
+
+}
+
+#cancel {
+    color: white;
+    padding-left: 5px;
+}
+
 .Form {
     /* background: rgb(0, 255, 229);
     height: 100vh;
@@ -24,8 +83,9 @@
     width: 100%;
     position: absolute;
     /* transition: height 2s; */
-    transition: top .4s;
-    /* display: none; */
+    transition: top .4s, opacity 2s,;
+    opacity: 0;
+    /* display: hidden; */
 
 }
 
@@ -35,13 +95,33 @@
     height: 100vh;
     width: 100%;
     position: absolute;
-    transition: top .4s;
+    transition: opacity 2s, top .4s;
     
 
+    
+    opacity: 1;
+    /* transition: display .4s; */
+    /* display: inline-block; */
+    
+
+}
+#searchIcon {
+    /* color: black;
+    z-index: 99;
+    width: 20%; */
+    /* background: black;
+    margin-top: 50px;
+    height: 500px; */
+    color:  yellow;
+    
 }
 
 .inputContainer {
     position: relative;
+    border-bottom: 4px solid black;
+    background: black;
+    margin-top: 50px;
+    
 }
 
 .clearInputBtn {

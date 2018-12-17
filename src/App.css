@@ -1,4 +1,10 @@
-* { margin:0; padding:0; box-sizing:border-box; }
+* { 
+  margin:0; 
+  padding:0; 
+  box-sizing:border-box;
+  /* background: black;  */
+
+}
 
 
 body {
@@ -7,6 +13,18 @@ body {
   width: 100vw;
   margin:0; padding:0;
   box-sizing:border-box;
+  max-height: 120vh;
+  transform: translateY(0px);
+  /* transition: transform 1s; */
+}
+
+.app {
+  overflow: hidden;
+}
+
+.App {
+  height: 100vh;
+  width: 100vw;
 }
 
 .cityListContainer{
@@ -15,6 +33,13 @@ body {
     height: auto;
     width: 100%;
     overflow-x: hidden
+}
+
+.plusBtn {
+  float: right;
+  border: 1px solid black;
+  border-radius: 50%;
+  margin-right: 2%;
 }
 
 

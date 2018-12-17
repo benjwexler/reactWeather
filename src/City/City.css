@@ -9,6 +9,7 @@
 .City {
     height: 60px;
     background: green;
+    background: rgb(0, 255, 229);
     width: 100%;
     /* min-width: 100vw !important; */
     padding: 0px;
