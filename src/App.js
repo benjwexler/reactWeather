@@ -222,6 +222,10 @@ class App extends Component {
 
     // document.querySelector('.App').style.overflow = "visible"
 
+    let that = this
+
+    let newListOfCities = this.state.listOfCities
+
     if (this.xAxisLocation || this.xAxisLocation === 0) {
       let unify = e.changedTouches ? e.changedTouches[0] : e
       let dx = unify.clientX - this.xAxisLocation, s = Math.sign(dx);
@@ -230,8 +234,31 @@ class App extends Component {
       dragAmount = dragAmount.match(/\d+/g)[0]
       if (dragAmount < 80) {
         document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
+
+        newListOfCities.forEach(function(city) {
+          if(city.name === newListOfCities[whichCity].name) {
+            console.log("it works")
+            city.deleteBtnDisplayed = false
+          }
+        });
+        
+      } else {
+        
+
+        newListOfCities.forEach(function(city) {
+          if(city.name === newListOfCities[whichCity].name) {
+            console.log("it works")
+            city.deleteBtnDisplayed = true
+          }
+        });
+
         
       }
+
+      this.setState({
+        listOfCities: newListOfCities
+      }
+      )
       this.xAxisLocation = null
     }
 
@@ -261,7 +288,7 @@ if(!this.xAxisLocation) {
 
   drag = (whichCity, e) => {
     // e.preventDefault();
-
+  let newListOfCities 
 
 // This isn't exactly working, but the idea is that user can only scroll if they aren't trying to swipe sideways
     if (this.xAxisLocation !== 0) {
@@ -272,8 +299,14 @@ if(!this.xAxisLocation) {
       let unify = e.changedTouches ? e.changedTouches[0] : e
       let amount = Math.round(unify.clientX - this.xAxisLocation)
 
+
+// this ensures that the delete button is either fully shown or not shown at all (and it prevents from swiping indefintly)
       if (amount <= -80) {
         amount = -80
+
+      
+
+        
       }
       if (amount >= 0) {
         amount = 0
@@ -286,10 +319,11 @@ if(!this.xAxisLocation) {
     console.log(`the city name is: `)
     console.log(this.state.listOfCities[cityIndex])
     console.log(document.getElementById(`city${cityIndex}`).style.transform)
-    if(document.getElementById(`city${cityIndex}`).style.transform === 'translate(0px)') {
-      console.log(0)
+    console.log(this.state.listOfCities[cityIndex].deleteBtnDisplayed)
+    if(this.state.listOfCities[cityIndex].deleteBtnDisplayed) {
+      console.log("showing delete button")
     } else {
-      console.log(1)
+      console.log("NOT showing delete button")
     }
 
   }
