@@ -96,6 +96,7 @@
     width: 100%;
     position: absolute;
     transition: opacity 2s, top .4s;
+    
 
     
     opacity: 1;

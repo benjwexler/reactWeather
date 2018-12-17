@@ -22,6 +22,7 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.xAxisLocation = null
+    this.yAxisLocation = null
   }
 
   state = {
@@ -175,7 +176,16 @@ class App extends Component {
     }
   }
 
+
+
   unify(e) { return e.changedTouches ? e.changedTouches[0] : e };
+
+  lockY = (e) => {
+    document.body.style.transition = "transform 0s";
+    let unify = e.changedTouches ? e.changedTouches[0] : e
+    this.yAxisLocation = unify.clientY
+    console.log(this.yAxisLocation)
+  }
 
   lock = (whichCity, e) => {
     document.body.style.position = "fixed"
@@ -192,10 +202,25 @@ class App extends Component {
 
   }
 
-  move = (whichCity, e) => {
-    document.body.style.position = "static"
+  moveY = (e) => {
 
-    document.body.style.overflow = "visible"
+    if (this.yAxisLocation || this.yAxisLocation === 0) {
+      let unify = e.changedTouches ? e.changedTouches[0] : e
+      console.log(this.yAxisLocation)
+      let dy = unify.clientY - this.yAxisLocation, s = Math.sign(dy);
+      this.yAxisLocation = null
+    }
+
+
+    document.body.style.transition = "transform .5s";
+    document.body.style.transform = `translateY(0px)`
+
+  }
+
+  move = (whichCity, e) => {
+    // document.querySelector('.App').style.position = "static"
+
+    // document.querySelector('.App').style.overflow = "visible"
 
     if (this.xAxisLocation || this.xAxisLocation === 0) {
       let unify = e.changedTouches ? e.changedTouches[0] : e
@@ -219,9 +244,26 @@ class App extends Component {
     console.log("Whyis it scrolling?")
   }
 
-  drag = (whichCity, e) => {
-    e.preventDefault();
+  dragY = (e) => {
 
+    console.log(e.target)
+    console.log(this.xAxisLocation)
+
+if(!this.xAxisLocation) {
+    if (this.yAxisLocation || this.yAxisLocation === 0) {
+      let unify = e.changedTouches ? e.changedTouches[0] : e
+      let amount = Math.round(unify.clientY - this.yAxisLocation)
+
+      document.body.style.transform = `translateY(${amount}px)`
+    }
+  }
+}
+
+  drag = (whichCity, e) => {
+    // e.preventDefault();
+
+
+// This isn't exactly working, but the idea is that user can only scroll if they aren't trying to swipe sideways
     if (this.xAxisLocation !== 0) {
       document.body.style.overflow = "hidden"
     }
@@ -449,10 +491,12 @@ class App extends Component {
       localAMorPM = "PM"
       localHour -= 12
 
-      if (localHour === 0) {
-        localHour = 12
-      }
+     
 
+    }
+
+    if (localHour === 0) {
+      localHour = 12
     }
 
 
@@ -617,7 +661,14 @@ class App extends Component {
     )
 
     return (
-      <div className="App">
+      <div className="App"  
+      onMouseDown={(e) => this.lockY(e)}
+      onTouchStart={(e) => this.lockY(e)}
+      onMouseUp={(e) => this.moveY(e)}
+      onTouchEnd={(e) => this.moveY(e)}
+      onMouseMove={(e) => this.dragY(e)}
+      onTouchMove={(e) => this.dragY(e)}
+      >
         <div className="cityListContainer">
           {cities}
         </div>
