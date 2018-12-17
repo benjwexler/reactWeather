@@ -188,15 +188,15 @@ class App extends Component {
   }
 
   lock = (whichCity, e) => {
-    document.body.style.position = "fixed"
-    console.log(document.getElementById(`city${whichCity}`).style.transform)
-    console.log(whichCity)
-    console.log("djdnjdnjd")
     let unify = e.changedTouches ? e.changedTouches[0] : e
-
+    console.log(unify)
+   
+    this.displayCity(whichCity)
+    
+    document.body.style.position = "fixed"
+    
     this.xAxisLocation = unify.clientX
-    console.log(this.xAxisLocation)
-
+ 
     document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
     document.body.style.overflow = "hidden"
 
@@ -239,6 +239,7 @@ class App extends Component {
           if(city.name === newListOfCities[whichCity].name) {
             console.log("it works")
             city.deleteBtnDisplayed = false
+           
           }
         });
         
@@ -249,15 +250,18 @@ class App extends Component {
           if(city.name === newListOfCities[whichCity].name) {
             console.log("it works")
             city.deleteBtnDisplayed = true
+            
           }
         });
 
         
       }
 
+      
+
       this.setState({
         listOfCities: newListOfCities
-      }
+      }, 
       )
       this.xAxisLocation = null
     }
@@ -315,11 +319,8 @@ if(!this.xAxisLocation) {
     }
   };
 
-  displayCity = (cityIndex, e) => {
-    console.log(`the city name is: `)
-    console.log(this.state.listOfCities[cityIndex])
-    console.log(document.getElementById(`city${cityIndex}`).style.transform)
-    console.log(this.state.listOfCities[cityIndex].deleteBtnDisplayed)
+  displayCity = (cityIndex) => {
+
     if(this.state.listOfCities[cityIndex].deleteBtnDisplayed) {
       console.log("showing delete button")
     } else {
@@ -665,7 +666,7 @@ if(!this.xAxisLocation) {
             move={(e) => this.move(index, e)}
             drag={(e) => this.drag(index, e)}
             preventScroll={(e) => this.preventScroll(index, e)}
-            displayCity={(e ) => this.displayCity(index, e)}
+           
 
           />
         })}
