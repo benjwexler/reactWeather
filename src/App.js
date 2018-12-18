@@ -3,10 +3,12 @@ import './App.css';
 import './City/City.css';
 import './Unit/Unit.css';
 import './Form/Form.css';
+import './Forecast/Forecast.css';
 import Form from './Form/Form.js';
 import Weather from './Weather/Weather.js';
 import Unit from './Unit/Unit.js';
 import City from './City/City.js';
+import Forecast from './Forecast/Forecast.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
@@ -38,7 +40,8 @@ class App extends Component {
     gmtOffset: undefined,
     listOfCities: [],
     showSearchScreen: false,
-    displayCity: undefined 
+    displayCity: undefined,
+    showForecast: false
   }
 
   currentTemp = (lat, lon) => {
@@ -190,13 +193,13 @@ class App extends Component {
   lock = (whichCity, e) => {
     let unify = e.changedTouches ? e.changedTouches[0] : e
     console.log(unify)
-   
-    this.displayCity(whichCity)
-    
+    //  function that will show forecast for a city
+    // this.displayCity(whichCity)
+
     document.body.style.position = "fixed"
-    
+
     this.xAxisLocation = unify.clientX
- 
+
     document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
     document.body.style.overflow = "hidden"
 
@@ -221,6 +224,7 @@ class App extends Component {
     // document.querySelector('.App').style.position = "static"
 
     // document.querySelector('.App').style.overflow = "visible"
+   
 
     let that = this
 
@@ -233,39 +237,43 @@ class App extends Component {
       let dragAmount = document.getElementById(`city${whichCity}`).style.transform;
       dragAmount = dragAmount.match(/\d+/g)[0]
       if (dragAmount < 80) {
-        document.getElementById(`city${whichCity}`).style.transform = "translate(0px)";
-
-        newListOfCities.forEach(function(city) {
-          if(city.name === newListOfCities[whichCity].name) {
+        document.getElementById(`city${whichCity}`).style.transform = "translateX(0px)";
+        //below function will trigger the screen to show a city's forecast
+        console.log(`Drag Amount: ${dragAmount}`)
+        if(dragAmount == 0) {
+          this.displayCity(whichCity)
+        }
+        newListOfCities.forEach(function (city) {
+          if (city.name === newListOfCities[whichCity].name) {
             console.log("it works")
             city.deleteBtnDisplayed = false
-           
+
           }
         });
-        
-      } else {
-        
 
-        newListOfCities.forEach(function(city) {
-          if(city.name === newListOfCities[whichCity].name) {
+      } else {
+
+
+        newListOfCities.forEach(function (city) {
+          if (city.name === newListOfCities[whichCity].name) {
             console.log("it works")
             city.deleteBtnDisplayed = true
-            
+
           }
         });
 
-        
+
       }
 
-      
+
 
       this.setState({
         listOfCities: newListOfCities
-      }, 
+      },
       )
       this.xAxisLocation = null
     }
-
+    
   }
 
   preventScroll = (whichCity, e) => {
@@ -280,21 +288,21 @@ class App extends Component {
     console.log(e.target)
     console.log(this.xAxisLocation)
 
-if(!this.xAxisLocation) {
-    if (this.yAxisLocation || this.yAxisLocation === 0) {
-      let unify = e.changedTouches ? e.changedTouches[0] : e
-      let amount = Math.round(unify.clientY - this.yAxisLocation)
+    if (!this.xAxisLocation) {
+      if (this.yAxisLocation || this.yAxisLocation === 0) {
+        let unify = e.changedTouches ? e.changedTouches[0] : e
+        let amount = Math.round(unify.clientY - this.yAxisLocation)
 
-      document.body.style.transform = `translateY(${amount}px)`
+        document.body.style.transform = `translateY(${amount}px)`
+      }
     }
   }
-}
 
   drag = (whichCity, e) => {
     // e.preventDefault();
-  let newListOfCities 
+    let newListOfCities
 
-// This isn't exactly working, but the idea is that user can only scroll if they aren't trying to swipe sideways
+    // This isn't exactly working, but the idea is that user can only scroll if they aren't trying to swipe sideways
     if (this.xAxisLocation !== 0) {
       document.body.style.overflow = "hidden"
     }
@@ -304,13 +312,13 @@ if(!this.xAxisLocation) {
       let amount = Math.round(unify.clientX - this.xAxisLocation)
 
 
-// this ensures that the delete button is either fully shown or not shown at all (and it prevents from swiping indefintly)
+      // this ensures that the delete button is either fully shown or not shown at all (and it prevents from swiping indefintly)
       if (amount <= -80) {
         amount = -80
 
-      
 
-        
+
+
       }
       if (amount >= 0) {
         amount = 0
@@ -320,11 +328,15 @@ if(!this.xAxisLocation) {
   };
 
   displayCity = (cityIndex) => {
-
-    if(this.state.listOfCities[cityIndex].deleteBtnDisplayed) {
+// Will only navigate to the showforecast screen is the delete button for the respective city isn't showing
+    if (this.state.listOfCities[cityIndex].deleteBtnDisplayed) {
       console.log("showing delete button")
     } else {
       console.log("NOT showing delete button")
+
+      this.setState({
+        showForecast: true
+      })
     }
 
   }
@@ -381,6 +393,12 @@ if(!this.xAxisLocation) {
 
   }
 
+  backToList = () => {
+    this.setState({
+      showForecast: false
+    })
+  }
+
 
   fetchWeather = () => {
 
@@ -427,7 +445,7 @@ if(!this.xAxisLocation) {
 
         if (myJson.main !== undefined) {
           showSearchScreen = !showSearchScreen
-          
+
           const currentTemp = myJson.main.temp
           city = myJson.name
           humidity = myJson.main.humidity
@@ -539,7 +557,7 @@ if(!this.xAxisLocation) {
       localAMorPM = "PM"
       localHour -= 12
 
-     
+
 
     }
 
@@ -559,7 +577,7 @@ if(!this.xAxisLocation) {
     if (document.getElementById('city')) {
       document.getElementById('city').value = ""
       document.getElementById('country').value = ""
-      }
+    }
 
   }
 
@@ -666,7 +684,7 @@ if(!this.xAxisLocation) {
             move={(e) => this.move(index, e)}
             drag={(e) => this.drag(index, e)}
             preventScroll={(e) => this.preventScroll(index, e)}
-           
+
 
           />
         })}
@@ -679,8 +697,8 @@ if(!this.xAxisLocation) {
 
     } else {
       if (document.getElementById('city')) {
-      document.getElementById('city').value = ""
-      document.getElementById('country').value = ""
+        document.getElementById('city').value = ""
+        document.getElementById('country').value = ""
       }
       showOrHide = "hideScreen"
     }
@@ -694,7 +712,7 @@ if(!this.xAxisLocation) {
 
 
       <div className={showOrHide} >
-            <Form
+        <Form
           click={this.fetchWeather}
           hideSearchScreen={() => this.clicker()}
           clearInput={() => this.clearInput()}
@@ -709,23 +727,22 @@ if(!this.xAxisLocation) {
 
     )
 
-    return (
-      <div className="App"  
-      onMouseDown={(e) => this.lockY(e)}
-      onTouchStart={(e) => this.lockY(e)}
-      onMouseUp={(e) => this.moveY(e)}
-      onTouchEnd={(e) => this.moveY(e)}
-      onMouseMove={(e) => this.dragY(e)}
-      onTouchMove={(e) => this.dragY(e)}
-      >
+    let everything
+
+    if(this.state.showForecast === false) {
+
+    everything = (
+
+      <div>
+
         <div className="cityListContainer">
           {cities}
         </div>
-        <div className="plusBtn" onClick={() => this.clicker()} > 
-        <FontAwesomeIcon
-          
-          icon={faPlus} />
-          </div>
+        <div className="plusBtn" onClick={() => this.clicker()} >
+          <FontAwesomeIcon
+
+            icon={faPlus} />
+        </div>
 
         <Unit
           click={this.setUnit}
@@ -741,6 +758,29 @@ if(!this.xAxisLocation) {
 
 
 
+      </div>
+
+    )
+  } else {
+    everything = (
+      <Forecast
+        backToList = {() => this.backToList()}
+      />
+    
+    
+    )
+  }
+
+    return (
+      <div className="App"
+        onMouseDown={(e) => this.lockY(e)}
+        onTouchStart={(e) => this.lockY(e)}
+        onMouseUp={(e) => this.moveY(e)}
+        onTouchEnd={(e) => this.moveY(e)}
+        onMouseMove={(e) => this.dragY(e)}
+        onTouchMove={(e) => this.dragY(e)}
+      >
+        {everything}
       </div>
     );
   }

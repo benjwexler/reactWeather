@@ -96,6 +96,8 @@
     width: 100%;
     position: absolute;
     transition: opacity 2s, top .4s;
+    /* border: 10px solid purple; */
+    /* z-index: -999; */
     
 
     
@@ -105,6 +107,17 @@
     
 
 }
+
+.displayForecast {
+    top: 0px;
+    background: yellow;
+    height: 100vh;
+    width: 100%;
+    position: absolute;
+    transition: opacity 2s, top .4s;
+}
+
+
 #searchIcon {
     /* color: black;
     z-index: 99;
