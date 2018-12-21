@@ -41,7 +41,8 @@ class App extends Component {
     listOfCities: [],
     showSearchScreen: false,
     displayCity: undefined,
-    showForecast: false
+    showForecast: false,
+    displayCityCurrentTemp: undefined
   }
 
   currentTemp = (lat, lon) => {
@@ -293,7 +294,10 @@ class App extends Component {
         let unify = e.changedTouches ? e.changedTouches[0] : e
         let amount = Math.round(unify.clientY - this.yAxisLocation)
 
+        if (this.state.showForecast === false) {
+
         document.body.style.transform = `translateY(${amount}px)`
+        }
       }
     }
   }
@@ -335,7 +339,9 @@ class App extends Component {
       console.log("NOT showing delete button")
 
       this.setState({
-        showForecast: true
+        showForecast: true,
+        displayCity: this.state.listOfCities[cityIndex].name,
+        displayCityCurrentTemp: this.state.listOfCities[cityIndex].temp
       })
     }
 
@@ -765,6 +771,9 @@ class App extends Component {
     everything = (
       <Forecast
         backToList = {() => this.backToList()}
+        
+        displayCity = {this.state.displayCity}
+        displayCityCurrentTemp = {Math.round(this.state.displayCityCurrentTemp)}
       />
     
     
