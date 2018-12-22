@@ -7,6 +7,33 @@
     transition: opacity 2s, top .4s;
 }
 
+.cityNameContainter {
+    height: 5%;
+    width:  100%;
+    border-bottom: 1px solid black;
+    text-align: center;
+    padding-top: 10px;
+    font-size: 20px;
+    
+}
+
+.currentConditionContainter {
+    height: 5%;
+    width:  100%;
+    border-bottom: 1px solid black;
+    text-align: center;
+    font-size: 12px;
+    /* padding-top: 10px; */ 
+}
+
+.currentTempContainer {
+    height: 10%;
+    width:  100%;
+    border-bottom: 1px solid black;
+    text-align: center;
+    font-size: 36px;
+}
+
 .forecastBottomSection {
 position: absolute;
 bottom: 0px;
