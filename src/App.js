@@ -14,6 +14,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
+import { windDirectionFunc } from './Functions.js';
 
 
 library.add(faSearch)
@@ -58,9 +59,6 @@ class App extends Component {
         return response.json();
       })
       .then(function (myJson) {
-        console.log(myJson)
-        console.log(myJson.name)
-        console.log(myJson.coord.lat)
         listOfCities = [...that.state.listOfCities]
         city = {
           name: myJson.name,
@@ -75,14 +73,11 @@ class App extends Component {
 
         fetch(`https://api.timezonedb.com/v2.1/get-time-zone?key=${timeZoneAPIkey}&format=json&by=position&lat=${myJson.coord.lat}&lng=${myJson.coord.lon}`)
           .then(function (response) {
-            console.log(response)
-            console.log("timezone")
             return response.json();
           })
           .then(function (myJson) {
             gmtOffset = myJson.gmtOffset
             gmtOffset /= 3600
-            console.log(myJson)
             city.gmtOffset = gmtOffset
           })
       })
@@ -96,8 +91,6 @@ class App extends Component {
   componentDidMount() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        console.log(position.coords.latitude)
-        console.log(position.coords.longitude)
         this.currentTemp(position.coords.latitude, position.coords.longitude)
       })
 
@@ -126,6 +119,8 @@ class App extends Component {
       currentTime: new Date()
     });
   }
+
+  // setUnit = setUnit
 
   setUnit = (event) => {
 
@@ -188,14 +183,10 @@ class App extends Component {
     document.body.style.transition = "transform 0s";
     let unify = e.changedTouches ? e.changedTouches[0] : e
     this.yAxisLocation = unify.clientY
-    console.log(this.yAxisLocation)
   }
 
   lock = (whichCity, e) => {
     let unify = e.changedTouches ? e.changedTouches[0] : e
-    console.log(unify)
-    //  function that will show forecast for a city
-    // this.displayCity(whichCity)
 
     document.body.style.position = "fixed"
 
@@ -210,7 +201,6 @@ class App extends Component {
 
     if (this.yAxisLocation || this.yAxisLocation === 0) {
       let unify = e.changedTouches ? e.changedTouches[0] : e
-      console.log(this.yAxisLocation)
       let dy = unify.clientY - this.yAxisLocation, s = Math.sign(dy);
       this.yAxisLocation = null
     }
@@ -240,13 +230,11 @@ class App extends Component {
       if (dragAmount < 80) {
         document.getElementById(`city${whichCity}`).style.transform = "translateX(0px)";
         //below function will trigger the screen to show a city's forecast
-        console.log(`Drag Amount: ${dragAmount}`)
         if(dragAmount == 0) {
           this.displayCity(whichCity)
         }
         newListOfCities.forEach(function (city) {
           if (city.name === newListOfCities[whichCity].name) {
-            console.log("it works")
             city.deleteBtnDisplayed = false
 
           }
@@ -257,16 +245,10 @@ class App extends Component {
 
         newListOfCities.forEach(function (city) {
           if (city.name === newListOfCities[whichCity].name) {
-            console.log("it works")
             city.deleteBtnDisplayed = true
-
           }
         });
-
-
       }
-
-
 
       this.setState({
         listOfCities: newListOfCities
@@ -278,16 +260,10 @@ class App extends Component {
   }
 
   preventScroll = (whichCity, e) => {
-
     e.preventDefault();
-
-    console.log("Whyis it scrolling?")
   }
 
   dragY = (e) => {
-
-    console.log(e.target)
-    console.log(this.xAxisLocation)
 
     if (!this.xAxisLocation) {
       if (this.yAxisLocation || this.yAxisLocation === 0) {
@@ -334,10 +310,7 @@ class App extends Component {
   displayCity = (cityIndex) => {
 // Will only navigate to the showforecast screen is the delete button for the respective city isn't showing
     if (this.state.listOfCities[cityIndex].deleteBtnDisplayed) {
-      console.log("showing delete button")
     } else {
-      console.log("NOT showing delete button")
-
       this.setState({
         showForecast: true,
         displayCity: this.state.listOfCities[cityIndex].name,
@@ -376,7 +349,7 @@ class App extends Component {
 
         if (myJson.main !== undefined) {
           const currentTemp = myJson.main.temp
-          console.log(currentTemp)
+         
 
           for (let i = 0; i < listOfCities.length; i++) {
 
@@ -466,27 +439,21 @@ class App extends Component {
           fetch(`https://api.timezonedb.com/v2.1/get-time-zone?key=${timeZoneAPIkey}&format=json&by=position&lat=${myJson.coord.lat}&lng=${myJson.coord.lon}`)
             .then(function (response) {
               sun = myJson.sys.sunrise
-
-              console.log(response)
-              console.log("timezone")
               return response.json();
             })
             .then(function (myJson) {
               var t = new Date(sun * 1000);
               gmtOffset = myJson.gmtOffset
               gmtOffset /= 3600
-              console.log(t)
               let hour = ('0' + t.getUTCHours()).slice(-2)
               hour = parseInt(hour)
               hour += gmtOffset
-              console.log(`The GMTOFFSET is ${gmtOffset}`)
               cityObj.gmtOffset = gmtOffset
               that.setState({
                 gmtOffset: gmtOffset
               });
 
               var formatted = hour + ':' + ('0' + t.getUTCMinutes()).slice(-2);
-              console.log(formatted)
             })
 
           let cityAlreadyListed = false
@@ -502,15 +469,7 @@ class App extends Component {
           cityObj.pressure = pressure
           cityObj.deleteBtnDisplayed = false
 
-
-
-          console.log(`Motha Fucka ${cityObj}`)
-          console.log(cityObj)
-
           for (let i = 0; i < listOfCities.length; i++) {
-            console.log(`cityId just search is ${myJson.id}`)
-            console.log("blahBlah")
-            console.log(listOfCities[i].cityId)
             if (listOfCities[i].cityId === myJson.id) {
               cityAlreadyListed = true
               break
@@ -623,39 +582,7 @@ class App extends Component {
     let windDirection
     let windDegrees = this.state.windDirection
 
-    if (windDegrees > 348.75 || windDegrees <= 11.25) {
-      windDirection = "E"
-    } else if (windDegrees > 11.25 || windDegrees <= 33.75) {
-      windDirection = "NNE"
-    } else if (windDegrees > 33.75 || windDegrees <= 56.25) {
-      windDirection = "NE"
-    } else if (windDegrees > 56.25 || windDegrees <= 78.75) {
-      windDirection = "ENE"
-    } else if (windDegrees > 78.75 || windDegrees <= 101.25) {
-      windDirection = "E"
-    } else if (windDegrees > 101.25 || windDegrees <= 123.75) {
-      windDirection = "ESE"
-    } else if (windDegrees > 123.75 || windDegrees <= 146.25) {
-      windDirection = "SE"
-    } else if (windDegrees > 146.25 || windDegrees <= 168.75) {
-      windDirection = "SSE"
-    } else if (windDegrees > 168.75 || windDegrees <= 191.25) {
-      windDirection = "S"
-    } else if (windDegrees > 191.25 || windDegrees <= 213.75) {
-      windDirection = "SSW"
-    } else if (windDegrees > 213.75 || windDegrees <= 236.25) {
-      windDirection = "SW"
-    } else if (windDegrees > 236.25 || windDegrees <= 258.75) {
-      windDirection = "WSW"
-    } else if (windDegrees > 258.75 || windDegrees <= 281.25) {
-      windDirection = "W"
-    } else if (windDegrees > 281.25 || windDegrees <= 303.75) {
-      windDirection = "WNW"
-    } else if (windDegrees > 303.75 || windDegrees <= 326.25) {
-      windDirection = "NW"
-    } else {
-      windDirection = "NNW"
-    }
+    windDirection = windDirectionFunc(windDegrees)
 
     if (this.state.temp) {
 
