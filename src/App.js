@@ -14,7 +14,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { windDirectionFunc, getDayofWeek  } from './Functions.js';
+import { windDirectionFunc, getDayOfWeek  } from './Functions.js';
 
 
 library.add(faSearch)
@@ -40,12 +40,21 @@ class App extends Component {
     currentTime: undefined,
     gmtOffset: undefined,
     listOfCities: [],
+    cityInfo: {},
     showSearchScreen: false,
     displayCity: undefined,
     showForecast: false,
     displayCityCurrentTemp: undefined,
     displayCityMaxTemp: undefined,
-    displayCityMinTemp: undefined
+    displayCityMinTemp: undefined,
+    displayCityGmtOffset: undefined 
+  }
+
+  CityInfo = (first, last, age, eye) => {
+    this.name = first;
+    this.lastName = last;
+    this.age = age;
+    this.eyeColor = eye;
   }
 
   currentTemp = (lat, lon) => {
@@ -175,9 +184,19 @@ class App extends Component {
 
   deleteCity = (cityIndex) => {
     if (cityIndex !== 0) {
+      let cityId = this.state.listOfCities[cityIndex].cityId
+
+      let newCityInfo = this.state.cityInfo
+
+      delete newCityInfo[cityId]
+
+
       const cities = [...this.state.listOfCities];
       cities.splice(cityIndex, 1);
-      this.setState({ listOfCities: cities });
+      this.setState({ 
+        listOfCities: cities,
+        cityInfo: newCityInfo
+      });
     }
   }
 
@@ -236,7 +255,7 @@ class App extends Component {
       if (dragAmount < 80) {
         document.getElementById(`city${whichCity}`).style.transform = "translateX(0px)";
         //below function will trigger the screen to show a city's forecast
-        if(dragAmount == 0) {
+        if(dragAmount == 0 && (newListOfCities[whichCity].deleteBtnDisplayed === false)) {
           this.displayCity(whichCity)
         }
         newListOfCities.forEach(function (city) {
@@ -323,6 +342,7 @@ class App extends Component {
         displayCityCurrentTemp: this.state.listOfCities[cityIndex].temp,
         displayCityMaxTemp: this.state.listOfCities[cityIndex].maxTemp,
         displayCityMinTemp: this.state.listOfCities[cityIndex].minTemp,
+        displayCityGmtOffset: this.state.listOfCities[cityIndex].gmtOffset
       })
     }
 
@@ -481,11 +501,15 @@ class App extends Component {
           cityObj.pressure = pressure
           cityObj.deleteBtnDisplayed = false
 
-          for (let i = 0; i < listOfCities.length; i++) {
-            if (listOfCities[i].cityId === myJson.id) {
-              cityAlreadyListed = true
-              break
-            }
+          // for (let i = 0; i < listOfCities.length; i++) {
+          //   if (listOfCities[i].cityId === myJson.id) {
+          //     cityAlreadyListed = true
+          //     break
+          //   }
+          // }
+
+          if(that.state.cityInfo[myJson.id] !== undefined) {
+            cityAlreadyListed = true
           }
 
           if (cityAlreadyListed === false) {
@@ -495,6 +519,11 @@ class App extends Component {
           setInterval(
             () => that.updateCity(cityObj),
             60000)
+
+            let newCityInfo = {...that.state.cityInfo}
+
+            newCityInfo[cityObj.cityId] = cityObj
+            
 
           that.setState({
             temp: currentTemp,
@@ -507,7 +536,8 @@ class App extends Component {
             windDirection: myJson.wind.deg,
             pressure: pressure,
             listOfCities: listOfCities,
-            showSearchScreen: showSearchScreen
+            showSearchScreen: showSearchScreen,
+            cityInfo: newCityInfo
           });
 
 
@@ -629,6 +659,7 @@ class App extends Component {
             move={(e) => this.move(index, e)}
             drag={(e) => this.drag(index, e)}
             preventScroll={(e) => this.preventScroll(index, e)}
+        
 
 
           />
@@ -715,6 +746,7 @@ class App extends Component {
         displayCityCurrentTemp = {Math.round(this.state.displayCityCurrentTemp)}
         displayCityMaxTemp = {Math.round(this.state.displayCityMaxTemp)}
         displayCityMinTemp = {Math.round(this.state.displayCityMinTemp)}
+        displayCityGmtOffset = {getDayOfWeek(this.state.displayCityGmtOffset)}
       />
     
     

@@ -7,7 +7,7 @@ const forecast = (props) => {
         <div className="currentConditionContainter">Current Condition</div>
         <div className="currentTempContainer">{props.displayCityCurrentTemp}°</div>
         <div className="dayOfWeekAndHighLowContainer">
-            <div className="dayOfWeek"></div>
+            <div className="dayOfWeek">{props.displayCityGmtOffset}</div>
             <div className="highLowContainer">
                 <div className="minOrMaxTemp">{props.displayCityMaxTemp}</div>
                 <div className="minOrMaxTemp">{props.displayCityMinTemp}</div>
