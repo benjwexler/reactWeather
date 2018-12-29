@@ -14,7 +14,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { windDirectionFunc } from './Functions.js';
+import { windDirectionFunc, getDayofWeek  } from './Functions.js';
 
 
 library.add(faSearch)
@@ -43,7 +43,9 @@ class App extends Component {
     showSearchScreen: false,
     displayCity: undefined,
     showForecast: false,
-    displayCityCurrentTemp: undefined
+    displayCityCurrentTemp: undefined,
+    displayCityMaxTemp: undefined,
+    displayCityMinTemp: undefined
   }
 
   currentTemp = (lat, lon) => {
@@ -137,6 +139,8 @@ class App extends Component {
 
         listOfCities = listOfCities.map((city) => {
           city.temp = (city.temp * 9 / 5) + 32
+          city.minTemp = (city.minTemp * 9 / 5) + 32
+          city.maxTemp = (city.maxTemp * 9 / 5) + 32
           return city
 
         })
@@ -151,6 +155,8 @@ class App extends Component {
         setTemp = (this.state.temp - 32) * 5 / 9
         listOfCities = listOfCities.map((city) => {
           city.temp = (city.temp - 32) * 5 / 9
+          city.minTemp = (city.minTemp - 32) * 5 / 9
+          city.maxTemp = (city.maxTemp - 32) * 5 / 9
           return city
 
         })
@@ -314,7 +320,9 @@ class App extends Component {
       this.setState({
         showForecast: true,
         displayCity: this.state.listOfCities[cityIndex].name,
-        displayCityCurrentTemp: this.state.listOfCities[cityIndex].temp
+        displayCityCurrentTemp: this.state.listOfCities[cityIndex].temp,
+        displayCityMaxTemp: this.state.listOfCities[cityIndex].maxTemp,
+        displayCityMinTemp: this.state.listOfCities[cityIndex].minTemp,
       })
     }
 
@@ -421,6 +429,8 @@ class App extends Component {
       })
       .then(function (myJson) {
 
+        console.log(myJson)
+
 
         if (myJson.main !== undefined) {
           showSearchScreen = !showSearchScreen
@@ -461,6 +471,8 @@ class App extends Component {
 
           cityObj.name = city
           cityObj.temp = currentTemp
+          cityObj.maxTemp = myJson.main.temp_max
+          cityObj.minTemp = myJson.main.temp_min
           cityObj.cityId = myJson.id
           cityObj.sunrise = myJson.sys.sunrise
           cityObj.sunset = myJson.sys.sunset
@@ -701,6 +713,8 @@ class App extends Component {
         
         displayCity = {this.state.displayCity}
         displayCityCurrentTemp = {Math.round(this.state.displayCityCurrentTemp)}
+        displayCityMaxTemp = {Math.round(this.state.displayCityMaxTemp)}
+        displayCityMinTemp = {Math.round(this.state.displayCityMinTemp)}
       />
     
     

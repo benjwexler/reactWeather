@@ -43,6 +43,27 @@ export const setUnit = (event, ) => {
     });
   }
 
+export const getDayofWeek = (gmtOffset) => {
+    let gmtMilliseconds = (gmtOffset * 3600000)
+    let currentTime = new Date 
+
+    currentTime = currentTime.getTime()
+
+    let localDay = (gmtMilliseconds * currentTime).getDay()
+
+    let daysOfWeekObj=  {
+      0: "Sunday",
+      1: "Monday",
+      2: "Tuesday",
+      3: "Wednesday",
+      4: "Thursday",
+      5: "Friday",
+      6: "Saturday"
+    }
+
+    return daysOfWeekObj[localDay]
+}
+
 
 export const windDirectionFunc = (windDegrees) => {
 let windDirection
