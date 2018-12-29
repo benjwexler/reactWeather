@@ -8,9 +8,9 @@ const city = (props) => {
             // onMouseDown={props.lock}
             // onTouchStart={props.lock}
             onPointerDown={props.lock}
-            // onPointerUp={props.move}
-            onMouseUp={props.move}
-            onTouchEnd={props.move}
+            onPointerUp={props.move}
+            // onMouseUp={props.move}
+            // onTouchEnd={props.move}
             onMouseMove={props.drag}
             onTouchMove={props.drag}
             onWheel={props.preventScroll}

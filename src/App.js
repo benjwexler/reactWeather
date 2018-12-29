@@ -213,6 +213,8 @@ class App extends Component {
   lock = (whichCity, e) => {
     let unify = e.changedTouches ? e.changedTouches[0] : e
 
+    console.log(unify)
+
     document.body.style.position = "fixed"
 
     this.xAxisLocation = unify.clientX
@@ -240,25 +242,35 @@ class App extends Component {
     // document.querySelector('.App').style.position = "static"
 
     // document.querySelector('.App').style.overflow = "visible"
+
+    console.log(e.currentTarget)
+
+    console.log(this.state.listOfCities[whichCity].deleteBtnDisplayed)
    
 
     let that = this
 
     let newListOfCities = this.state.listOfCities
 
+    let unify = e.changedTouches ? e.changedTouches[0] : e
+      console.log(unify)
+
     if (this.xAxisLocation || this.xAxisLocation === 0) {
-      let unify = e.changedTouches ? e.changedTouches[0] : e
+      // let unify = e.changedTouches ? e.changedTouches[0] : e
+      // console.log(unify)
       let dx = unify.clientX - this.xAxisLocation, s = Math.sign(dx);
 
       let dragAmount = document.getElementById(`city${whichCity}`).style.transform;
       dragAmount = dragAmount.match(/\d+/g)[0]
+      console.log(dragAmount)
       if (dragAmount < 80) {
         document.getElementById(`city${whichCity}`).style.transform = "translateX(0px)";
         //below function will trigger the screen to show a city's forecast
-        if(dragAmount == 0 && (newListOfCities[whichCity].deleteBtnDisplayed === false)) {
-          this.displayCity(whichCity)
+        if(dragAmount == 0 && !that.state.listOfCities[whichCity].deleteBtnDisplayed) {
+          that.displayCity(whichCity)
         }
         newListOfCities.forEach(function (city) {
+          console.log("hits 1")
           if (city.name === newListOfCities[whichCity].name) {
             city.deleteBtnDisplayed = false
 
@@ -269,6 +281,7 @@ class App extends Component {
 
 
         newListOfCities.forEach(function (city) {
+          console.log("hits 2")
           if (city.name === newListOfCities[whichCity].name) {
             city.deleteBtnDisplayed = true
           }
@@ -304,6 +317,8 @@ class App extends Component {
   }
 
   drag = (whichCity, e) => {
+
+
     // e.preventDefault();
     let newListOfCities
 
@@ -334,8 +349,7 @@ class App extends Component {
 
   displayCity = (cityIndex) => {
 // Will only navigate to the showforecast screen is the delete button for the respective city isn't showing
-    if (this.state.listOfCities[cityIndex].deleteBtnDisplayed) {
-    } else {
+   
       this.setState({
         showForecast: true,
         displayCity: this.state.listOfCities[cityIndex].name,
@@ -344,7 +358,7 @@ class App extends Component {
         displayCityMinTemp: this.state.listOfCities[cityIndex].minTemp,
         displayCityGmtOffset: this.state.listOfCities[cityIndex].gmtOffset
       })
-    }
+    
 
   }
 
