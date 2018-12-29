@@ -62,3 +62,35 @@ display: flex
     height: 100%;
     border: 1px solid black;
 }
+
+.dayOfWeekAndHighLowContainer {
+    display: flex;
+    height: 4%;
+    width:  100%;
+    border-bottom: 1px solid black;
+    font-size: 16px;
+    justify-content: space-between
+
+}
+
+.dayOfWeek {
+    width: 50%;
+    height: 100%;
+    border: 1px solid black
+}
+
+.highLowContainer {
+    width: 30%;
+    height: 100%;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: row;
+   
+}
+
+.minOrMaxTemp {
+    width: 50%;
+    height: 100%;
+    border: 1px solid black;
+    
+}
