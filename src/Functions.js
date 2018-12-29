@@ -43,13 +43,20 @@ export const setUnit = (event, ) => {
     });
   }
 
-export const getDayofWeek = (gmtOffset) => {
+export const getDayOfWeek = (gmtOffset) => {
+
+  console.log("f jk")
     let gmtMilliseconds = (gmtOffset * 3600000)
+    console.log(typeof gmtMilliseconds)
     let currentTime = new Date 
 
     currentTime = currentTime.getTime()
 
-    let localDay = (gmtMilliseconds * currentTime).getDay()
+
+    let localDay = gmtMilliseconds + currentTime
+    console.log(localDay)
+    localDay = new Date(localDay)
+    localDay = localDay.getDay()
 
     let daysOfWeekObj=  {
       0: "Sunday",
